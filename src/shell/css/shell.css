@@ -33,6 +33,10 @@ body {
     height: 100%;
 }
 
+.desktop-icon {
+    cursor: pointer;
+}
+
 .window-layer {
     position: absolute;
     inset: 0;

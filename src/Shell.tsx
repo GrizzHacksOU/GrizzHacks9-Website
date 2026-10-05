@@ -1,16 +1,28 @@
+import { useState } from "react";
+import { WindowState } from "./shell/types/windowState";
+
+const [windows, setWindows] = useState<WindowState[]>([]);
+
+function openApp(appID: string) {
+    setWindows((prev) => {
+        const nextZ = Math.max(0, ...prev.map((w) => w.z)) + 1;
+
+        if (prev.some((w) => w.appID === appID)) {
+            return prev.map((w) => (w.appID === appID ? {...w, z: nextZ} : w));
+        }
+
+        const offset = prev.length * 24;
+        return [...prev, {appID, x: 80 + offset, y: 40 + offset, z: nextZ}];
+    })
+}
+
+
 function Shell() {
     return (
         <div className="shell">
             <main className="desktop">
-                <div className="desktop-icons">
-                    {/* placeholder for now to test logic */}
-                    <div className="desktop-icon">About</div>
-                    <div className="desktop-icon">Registration</div>
-                    <div className="desktop-icon">Schedule</div>
-                    <div className="desktop-icon">Sponsors</div>
-                    <div className="desktop-icon">FAQ</div>
-                    <div className="desktop-icon">Team</div>
-                </div>
+
+                <div className="window-layer"></div>
             </main>
             <footer className="taskbar">
                 <button className="start-button">Start</button>
