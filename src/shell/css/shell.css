@@ -1,0 +1,58 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body, #root {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    overflow: hidden;
+}
+
+.shell {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    height: 100%;
+}
+
+.desktop {
+    background: teal;
+    position: relative;
+    overflow: hidden;
+}
+
+.desktop-icons {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-rows: repeat(auto-fill, 76px);
+    grid-auto-columns: 76px;
+    gap: 4px;
+    padding: 8px;
+    height: 100%;
+}
+
+.window-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.window-layer > .window {
+    position: absolute;
+    pointer-events: auto;
+    width: 320px;
+}
+
+.taskbar {
+    background: gray;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.taskbar-tasks {
+    flex: 1;
+}
