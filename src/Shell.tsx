@@ -1,27 +1,27 @@
-import { useState } from "react";
-import { WindowState } from "./shell/types/windowState";
+// import { useState } from "react";
+// import { WindowState } from "./shell/types/windowState";
 
-const [windows, setWindows] = useState<WindowState[]>([]);
+// const [windows, setWindows] = useState<WindowState[]>([]);
 
-function openApp(appID: string) {
-    setWindows((prev) => {
-        const nextZ = Math.max(0, ...prev.map((w) => w.z)) + 1;
+// function openApp(appID: string) {
+//     setWindows((prev) => {
+//         const nextZ = Math.max(0, ...prev.map((w) => w.z)) + 1;
 
-        if (prev.some((w) => w.appID === appID)) {
-            return prev.map((w) => (w.appID === appID ? {...w, z: nextZ} : w));
-        }
+//         if (prev.some((w) => w.appID === appID)) {
+//             return prev.map((w) => (w.appID === appID ? {...w, z: nextZ} : w));
+//         }
 
-        const offset = prev.length * 24;
-        return [...prev, {appID, x: 80 + offset, y: 40 + offset, z: nextZ}];
-    })
-}
+//         const offset = prev.length * 24;
+//         return [...prev, {appID, x: 80 + offset, y: 40 + offset, z: nextZ}];
+//     })
+// }
 
 
 function Shell() {
     return (
         <div className="shell">
             <main className="desktop">
-
+                <div className="desktop-icons"></div>
                 <div className="window-layer"></div>
             </main>
             <footer className="taskbar">

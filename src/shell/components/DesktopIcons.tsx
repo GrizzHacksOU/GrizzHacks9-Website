@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { APPS } from "../data/apps";
-import onOpenApp from "../../Shell";
+// import onOpenApp from "../../Shell";
 import DesktopIcon from "./DesktopIcon";
 
 const [selectedID, setSelectedID] = useState<string | null>(null);
@@ -20,7 +20,6 @@ export default function DesktopIcons() {
                     app={app}
                     selected={app.id === selectedID}
                     onSelect={setSelectedID}
-                    onOpen={onOpenApp}
                 />
             ))
             }

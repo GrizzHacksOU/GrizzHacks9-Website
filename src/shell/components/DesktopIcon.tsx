@@ -7,7 +7,7 @@ interface DesktopIconProps {
     onOpen: (id: string) => void;
 }
 
-export default function DesktopIcons({ app, selected, onSelect, onOpen} : DesktopIconProps) {
+export default function DesktopIcons({ app, selected, onSelect} : DesktopIconProps) {
     return (
         <button
             type="button"
