@@ -41,6 +41,18 @@ function Shell() {
         });
     }
 
+    function moveApp(appID: string, x: number, y: number) {
+        setWindows((prev) => {
+            const target = prev.find((win) => win.appID === appID);
+
+            if (!target || (target.x === x && target.y === y)) {
+                return prev;
+            }
+
+            return prev.map((win) => (win.appID === appID ? {...win, x: x, y: y} : win));
+        });
+    }
+
     const topZ = getTopZ(windows);
 
     return (
@@ -55,6 +67,7 @@ function Shell() {
                             active={win.z === topZ}
                             onFocus={focusApp}
                             onClose={closeApp}
+                            onMove={moveApp}
                         />
                     ))}
                 </div>

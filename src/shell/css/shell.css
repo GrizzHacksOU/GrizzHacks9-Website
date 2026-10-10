@@ -66,6 +66,12 @@ body {
 
 .window-body { position: relative;}
 
+.title-bar {
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+}
+
 .focus-shield {
     position: absolute;
     inset: 0;
