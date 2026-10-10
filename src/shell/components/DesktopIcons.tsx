@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { APPS } from "../data/apps";
 import DesktopIcon from "./DesktopIcon";
 
-interface DesktopIconProps {
+interface DesktopIconsProps {
     onOpenApp: (id: string) => void;
 }
 
-export default function DesktopIcons({onOpenApp}: DesktopIconProps) {
+export default function DesktopIcons({onOpenApp}: DesktopIconsProps) {
     const [selectedID, setSelectedID] = useState<string | null>(null);
 
     function handleEmptyClick(e: React.MouseEvent<HTMLDivElement>) {

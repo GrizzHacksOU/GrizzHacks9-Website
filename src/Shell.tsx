@@ -12,7 +12,7 @@ function Shell() {
 
     function openApp(appID: string) {
         setWindows((prev) => {
-            const nextZ = getTopZ(prev);
+            const nextZ = getTopZ(prev) + 1;
 
             if (prev.some((win) => win.appID === appID)) {
                 return prev.map((win) => (win.appID === appID ? {...win, z: nextZ} : win));
@@ -29,7 +29,7 @@ function Shell() {
 
     function focusApp(appID: string) {
         setWindows((prev) => {
-            const topZ = getTopZ(prev) + 1;
+            const topZ = getTopZ(prev);
             const target = prev.find((win) => win.appID === appID);
 
             if (!target || target.z === topZ) {
