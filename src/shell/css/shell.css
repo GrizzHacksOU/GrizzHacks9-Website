@@ -35,6 +35,21 @@ body {
 
 .desktop-icon {
     cursor: pointer;
+    background: none;
+    border: none;
+    box-shadow: none;
+    min-width: 0;
+    min-height: 0;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+}
+
+.desktop-icon img {
+    width: 32px;
+    height: 32px;
 }
 
 .window-layer {
@@ -47,6 +62,13 @@ body {
     position: absolute;
     pointer-events: auto;
     width: 320px;
+}
+
+.window-body { position: relative;}
+
+.focus-shield {
+    position: absolute;
+    inset: 0;
 }
 
 .taskbar {

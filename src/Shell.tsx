@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { WindowState } from "./shell/types/windowState";
 import Window from "./shell/components/Window";
 import DesktopIcons from "./shell/components/DesktopIcons";
+import { APPS } from "./shell/data/apps";
 
 function getTopZ(windows: WindowState[]): number {
     return Math.max(0, ...windows.map((win) => win.z))
@@ -61,7 +62,15 @@ function Shell() {
             <footer className="taskbar">
                 <button className="start-button">Start</button>
                 <div className="taskbar-tasks">
-
+                    {windows.map((win) => (
+                        <button
+                            key={win.appID}
+                            className={win.z === topZ ? 'task-button is-active' : 'task-button'}
+                            onClick={() => focusApp(win.appID)}
+                        >
+                            {APPS.find((app) => app.id === win.appID)?.title}
+                        </button>
+                    ))}
                 </div>
                 <div className="taskbar-tray">12:00 AM</div>
                 { /* hardcoded for now, will be an actual timestamp/timer during the event */}

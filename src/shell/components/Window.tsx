@@ -28,6 +28,7 @@ export default function Window({win, active, onFocus, onClose}: WindowProps) {
             </div>
             <div className="window-body">
                 <iframe src={app.url} title={app.title}></iframe>
+                {!active && <div className="focus-shield"/>}
             </div>
         </div>
     );
