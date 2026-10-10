@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import { APPS } from "../data/apps";
-// import onOpenApp from "../../Shell";
 import DesktopIcon from "./DesktopIcon";
 
-const [selectedID, setSelectedID] = useState<string | null>(null);
-
-function handleEmptyClick(e: React.MouseEvent<HTMLDivElement>) {
-    if (e.target === e.currentTarget) {
-        setSelectedID(null);
-    }
+interface DesktopIconProps {
+    onOpenApp: (id: string) => void;
 }
 
-export default function DesktopIcons() {
+export default function DesktopIcons({onOpenApp}: DesktopIconProps) {
+    const [selectedID, setSelectedID] = useState<string | null>(null);
+
+    function handleEmptyClick(e: React.MouseEvent<HTMLDivElement>) {
+        if (e.target === e.currentTarget) {
+            setSelectedID(null);
+        }
+    }
+
     return (
         <div className="desktop-icons" onClick={handleEmptyClick}>
             {APPS.map((app) => (
@@ -20,8 +23,8 @@ export default function DesktopIcons() {
                     app={app}
                     selected={app.id === selectedID}
                     onSelect={setSelectedID}
-                />
-            ))
+                    onOpen={onOpenApp}
+                />))
             }
         </div>
     );

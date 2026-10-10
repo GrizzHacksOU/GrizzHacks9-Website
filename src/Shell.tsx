@@ -1,28 +1,62 @@
-// import { useState } from "react";
-// import { WindowState } from "./shell/types/windowState";
+import { useState } from "react";
+import type { WindowState } from "./shell/types/windowState";
+import Window from "./shell/components/Window";
+import DesktopIcons from "./shell/components/DesktopIcons";
 
-// const [windows, setWindows] = useState<WindowState[]>([]);
-
-// function openApp(appID: string) {
-//     setWindows((prev) => {
-//         const nextZ = Math.max(0, ...prev.map((w) => w.z)) + 1;
-
-//         if (prev.some((w) => w.appID === appID)) {
-//             return prev.map((w) => (w.appID === appID ? {...w, z: nextZ} : w));
-//         }
-
-//         const offset = prev.length * 24;
-//         return [...prev, {appID, x: 80 + offset, y: 40 + offset, z: nextZ}];
-//     })
-// }
-
+function getTopZ(windows: WindowState[]): number {
+    return Math.max(0, ...windows.map((win) => win.z))
+}
 
 function Shell() {
+    const [windows, setWindows] = useState<WindowState[]>([]);
+
+    function openApp(appID: string) {
+        setWindows((prev) => {
+            const nextZ = getTopZ(prev);
+
+            if (prev.some((win) => win.appID === appID)) {
+                return prev.map((win) => (win.appID === appID ? {...win, z: nextZ} : win));
+            }
+
+            const offset = prev.length * 24;
+            return [...prev, {appID, x: 80 + offset, y: 40 + offset, z: nextZ}];
+        });
+    }
+
+    function closeApp(appID: string) {
+        setWindows((prev) => prev.filter((win) => win.appID !== appID));
+    }
+
+    function focusApp(appID: string) {
+        setWindows((prev) => {
+            const topZ = getTopZ(prev) + 1;
+            const target = prev.find((win) => win.appID === appID);
+
+            if (!target || target.z === topZ) {
+                return prev;
+            }
+
+            return prev.map((win) => (win.appID === appID ? {...win, z: topZ + 1} : win));
+        });
+    }
+
+    const topZ = getTopZ(windows);
+
     return (
         <div className="shell">
             <main className="desktop">
-                <div className="desktop-icons"></div>
-                <div className="window-layer"></div>
+                <DesktopIcons onOpenApp={openApp}/>
+                <div className="window-layer">
+                    {windows.map((win) => (
+                        <Window
+                            key={win.appID}
+                            win={win}
+                            active={win.z === topZ}
+                            onFocus={focusApp}
+                            onClose={closeApp}
+                        />
+                    ))}
+                </div>
             </main>
             <footer className="taskbar">
                 <button className="start-button">Start</button>
