@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { WindowState } from "./shell/types/windowState";
 import Window from "./shell/components/Window";
 import DesktopIcons from "./shell/components/DesktopIcons";
+import StartMenu from "./shell/components/StartMenu";
 import { APPS } from "./shell/data/apps";
 
 function getTopZ(windows: WindowState[]): number {
@@ -73,7 +74,7 @@ function Shell() {
                 </div>
             </main>
             <footer className="taskbar">
-                <button className="start-button">Start</button>
+                <StartMenu />
                 <div className="taskbar-tasks">
                     {windows.map((win) => (
                         <button
