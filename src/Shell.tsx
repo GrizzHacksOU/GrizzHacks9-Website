@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { WindowState } from "./shell/types/windowState";
+import type { Rectangle, WindowState } from "./shell/types/windowState";
 import Window from "./shell/components/Window";
 import DesktopIcons from "./shell/components/DesktopIcons";
 import StartMenu from "./shell/components/StartMenu";
@@ -21,7 +21,7 @@ function Shell() {
             }
 
             const offset = prev.length * 24;
-            return [...prev, {appID, x: 80 + offset, y: 40 + offset, z: nextZ}];
+            return [...prev, {appID, x: 80 + offset, y: 40 + offset, width: 640, height: 480, z: nextZ}];
         });
     }
 
@@ -54,6 +54,22 @@ function Shell() {
         });
     }
 
+    function resizeApp(appID: string, rect: Rectangle) {
+        setWindows((prev) => {
+            const target = prev.find((win) => win.appID === appID);
+
+            if (!target || (
+                    target.width === rect.width &&
+                    target.height === rect.height &&
+                    target.x === rect.x &&
+                    target.y === rect.y)) {
+                return prev;
+            }
+
+            return prev.map((win) => (win.appID === appID ? {...win, ...rect} : win));
+        });
+    }
+
     const topZ = getTopZ(windows);
 
     return (
@@ -69,6 +85,7 @@ function Shell() {
                             onFocus={focusApp}
                             onClose={closeApp}
                             onMove={moveApp}
+                            onResize={resizeApp}
                         />
                     ))}
                 </div>
