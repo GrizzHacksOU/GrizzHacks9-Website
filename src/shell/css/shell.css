@@ -65,6 +65,14 @@ body {
     flex-direction: column;
 }
 
+.window-layer > .window.is-minimized {
+    display: none;
+}
+
+.window-layer > .window.is-maximized {
+    inset: 0;
+}
+
 .window-body {
     flex: 1;
     min-height: 0;

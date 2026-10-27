@@ -7,7 +7,7 @@ export interface Rectangle {
 
 export interface WindowState extends Rectangle {
     appID: string;
-    x: number;
-    y: number;
     z: number;
+    minimized: boolean;
+    maximized: boolean;
 }

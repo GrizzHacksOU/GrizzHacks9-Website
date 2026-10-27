@@ -14,6 +14,8 @@ interface WindowProps {
     onClose: (id: string) => void;
     onMove: (id: string, x: number, y: number) => void;
     onResize: (id: string, rect: Rectangle) => void;
+    onMinimize: (id: string) => void;
+    onMaximize: (id: string) => void;
 }
 
 interface DragStart {
@@ -37,7 +39,7 @@ function clamp(value: number, min: number, max: number): number {
     return Math.min(Math.max(value, min), max);
 }
 
-export default function Window({win, active, onFocus, onClose, onMove, onResize}: WindowProps) {
+export default function Window({win, active, onFocus, onClose, onMove, onResize, onMinimize, onMaximize}: WindowProps) {
     const app = APPS.find((app) => app.id === win.appID);
     const dragStart = useRef<DragStart | null>(null);
     const [dragging, setDragging] = useState(false);
@@ -132,10 +134,19 @@ export default function Window({win, active, onFocus, onClose, onMove, onResize}
         setDragging(false);
     }
 
+    const classes = ["window"];
+    if (active) classes.push("is-active");
+    if (win.minimized) classes.push("is-minimized");
+    if (win.maximized) classes.push("is-maximized");
+
+    const style = win.maximized ?
+        {zIndex: win.z} :
+        {left: win.x, top: win.y, width: win.width, height: win.height, zIndex: win.z};
+
     return (
         <div
-            className={active ? 'window is-active' : 'window'}
-            style={{left: win.x, top: win.y, width: win.width, height: win.height, zIndex: win.z}}
+            className={classes.join(" ")}
+            style={style}
             onPointerDown={() => onFocus(win.appID)}
         >
             <div
@@ -147,7 +158,7 @@ export default function Window({win, active, onFocus, onClose, onMove, onResize}
                 >
                 <div className="title-bar-text">{app.title}</div>
                 <div className="title-bar-controls">
-                    <button aria-label="Minimize"></button>
+                    <button aria-label=""></button>
                     <button aria-label="Maximize"></button>
                     <button aria-label="Close" onClick={() => onClose(win.appID)}></button>
                 </div>
