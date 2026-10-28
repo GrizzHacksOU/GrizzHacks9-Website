@@ -183,7 +183,7 @@ export default function Window({win, active, onFocus, onClose, onMove, onResize,
                 <iframe src={app.url} title={app.title}></iframe>
                 {(!active || dragging) && <div className="focus-shield"/>}
             </div>
-            {win.maximized && EDGES.map((edge) => (
+            {!win.maximized && EDGES.map((edge) => (
                 <div
                     key={edge}
                     className={`resize-handle resize-${edge}`}
