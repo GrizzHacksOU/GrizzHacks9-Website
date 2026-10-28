@@ -80,6 +80,28 @@ function Shell() {
         });
     }
 
+    function minimizeApp(appID: string) {
+        setWindows((prev) => {
+            const target = prev.find((win) => win.appID === appID);
+
+            if (!target || target.minimized) {
+                return prev;
+            }
+
+            return prev.map((win) => (win.appID === appID ? {...win, minimized: true} : win));
+        });
+    }
+
+    function toggleMaximize(appID: string) {
+        setWindows((prev) => {
+            const target = prev.find((win) => win.appID === appID);
+
+            if (!target) return prev;
+
+            return prev.map((win) => (win.appID === appID ? {...win, maximized: !win.maximized} : win));
+        });
+    }
+
     return (
         <div className="shell">
             <main className="desktop">
@@ -94,6 +116,8 @@ function Shell() {
                             onClose={closeApp}
                             onMove={moveApp}
                             onResize={resizeApp}
+                            onMinimize={minimizeApp}
+                            onMaximizeToggle={toggleMaximize}
                         />
                     ))}
                 </div>

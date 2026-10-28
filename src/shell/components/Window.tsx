@@ -15,7 +15,7 @@ interface WindowProps {
     onMove: (id: string, x: number, y: number) => void;
     onResize: (id: string, rect: Rectangle) => void;
     onMinimize: (id: string) => void;
-    onMaximize: (id: string) => void;
+    onMaximizeToggle: (id: string) => void;
 }
 
 interface DragStart {
@@ -39,7 +39,7 @@ function clamp(value: number, min: number, max: number): number {
     return Math.min(Math.max(value, min), max);
 }
 
-export default function Window({win, active, onFocus, onClose, onMove, onResize, onMinimize, onMaximize}: WindowProps) {
+export default function Window({win, active, onFocus, onClose, onMove, onResize, onMinimize, onMaximizeToggle}: WindowProps) {
     const app = APPS.find((app) => app.id === win.appID);
     const dragStart = useRef<DragStart | null>(null);
     const [dragging, setDragging] = useState(false);
@@ -50,6 +50,7 @@ export default function Window({win, active, onFocus, onClose, onMove, onResize,
     function handleTitlePointerDown(e: React.PointerEvent<HTMLDivElement>) {
         if (e.button !== 0) return;
         if ((e.target as HTMLElement).closest(".title-bar-controls")) return;
+        if (win.maximized) return;
 
         const windowEl = e.currentTarget.parentElement;
         const layer = e.currentTarget.closest<HTMLElement>(".window-layer");
@@ -134,6 +135,11 @@ export default function Window({win, active, onFocus, onClose, onMove, onResize,
         setDragging(false);
     }
 
+    function handleTitleDoubleClick(e: React.MouseEvent<HTMLDivElement>) {
+        if ((e.target as HTMLElement).closest(".title-bar-controls")) return;
+        onMaximizeToggle(win.appID);
+    }
+
     const classes = ["window"];
     if (active) classes.push("is-active");
     if (win.minimized) classes.push("is-minimized");
@@ -155,19 +161,29 @@ export default function Window({win, active, onFocus, onClose, onMove, onResize,
                 onPointerMove={handleTitlePointerMove}
                 onPointerUp={endDrag}
                 onPointerCancel={endDrag}
+                onDoubleClick={handleTitleDoubleClick}
                 >
                 <div className="title-bar-text">{app.title}</div>
                 <div className="title-bar-controls">
-                    <button aria-label=""></button>
-                    <button aria-label="Maximize"></button>
-                    <button aria-label="Close" onClick={() => onClose(win.appID)}></button>
+                    <button
+                        aria-label="Minimize"
+                        onClick={() => onMinimize(win.appID)}>
+                    </button>
+                    <button
+                        aria-label={win.maximized ? "Restore" : "Maximize"}
+                        onClick={() => onMaximizeToggle(win.appID)}>
+                    </button>
+                    <button
+                        aria-label="Close"
+                        onClick={() => onClose(win.appID)}>
+                    </button>
                 </div>
             </div>
             <div className="window-body">
                 <iframe src={app.url} title={app.title}></iframe>
                 {(!active || dragging) && <div className="focus-shield"/>}
             </div>
-            {EDGES.map((edge) => (
+            {win.maximized && EDGES.map((edge) => (
                 <div
                     key={edge}
                     className={`resize-handle resize-${edge}`}
