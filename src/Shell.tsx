@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { WindowState } from "./shell/types/windowState";
+import type { Rectangle, WindowState } from "./shell/types/windowState";
 import Window from "./shell/components/Window";
 import DesktopIcons from "./shell/components/DesktopIcons";
 import StartMenu from "./shell/components/StartMenu";
@@ -11,17 +11,27 @@ function getTopZ(windows: WindowState[]): number {
 
 function Shell() {
     const [windows, setWindows] = useState<WindowState[]>([]);
+    const activeZ = getTopZ(windows.filter((win) => !win.minimized));
 
     function openApp(appID: string) {
         setWindows((prev) => {
             const nextZ = getTopZ(prev) + 1;
 
             if (prev.some((win) => win.appID === appID)) {
-                return prev.map((win) => (win.appID === appID ? {...win, z: nextZ} : win));
+                return prev.map((win) => (win.appID === appID ? {...win, z: nextZ, minimized: false} : win));
             }
 
             const offset = prev.length * 24;
-            return [...prev, {appID, x: 80 + offset, y: 40 + offset, z: nextZ}];
+            return [...prev, {
+                appID,
+                x: 80 + offset,
+                y: 40 + offset,
+                width: 320,
+                height: 240,
+                z: nextZ,
+                minimized: false,
+                maximized: false
+            }];
         });
     }
 
@@ -34,11 +44,11 @@ function Shell() {
             const topZ = getTopZ(prev);
             const target = prev.find((win) => win.appID === appID);
 
-            if (!target || target.z === topZ) {
+            if (!target || (target.z === topZ && !target.minimized)) {
                 return prev;
             }
 
-            return prev.map((win) => (win.appID === appID ? {...win, z: topZ + 1} : win));
+            return prev.map((win) => (win.appID === appID ? {...win, z: topZ + 1, minimized: false} : win));
         });
     }
 
@@ -54,7 +64,43 @@ function Shell() {
         });
     }
 
-    const topZ = getTopZ(windows);
+    function resizeApp(appID: string, rect: Rectangle) {
+        setWindows((prev) => {
+            const target = prev.find((win) => win.appID === appID);
+
+            if (!target || (
+                    target.width === rect.width &&
+                    target.height === rect.height &&
+                    target.x === rect.x &&
+                    target.y === rect.y)) {
+                return prev;
+            }
+
+            return prev.map((win) => (win.appID === appID ? {...win, ...rect} : win));
+        });
+    }
+
+    function minimizeApp(appID: string) {
+        setWindows((prev) => {
+            const target = prev.find((win) => win.appID === appID);
+
+            if (!target || target.minimized) {
+                return prev;
+            }
+
+            return prev.map((win) => (win.appID === appID ? {...win, minimized: true} : win));
+        });
+    }
+
+    function toggleMaximize(appID: string) {
+        setWindows((prev) => {
+            const target = prev.find((win) => win.appID === appID);
+
+            if (!target) return prev;
+
+            return prev.map((win) => (win.appID === appID ? {...win, maximized: !win.maximized} : win));
+        });
+    }
 
     return (
         <div className="shell">
@@ -65,10 +111,13 @@ function Shell() {
                         <Window
                             key={win.appID}
                             win={win}
-                            active={win.z === topZ}
+                            active={!win.minimized && win.z === activeZ}
                             onFocus={focusApp}
                             onClose={closeApp}
                             onMove={moveApp}
+                            onResize={resizeApp}
+                            onMinimize={minimizeApp}
+                            onMaximizeToggle={toggleMaximize}
                         />
                     ))}
                 </div>
@@ -79,7 +128,7 @@ function Shell() {
                     {windows.map((win) => (
                         <button
                             key={win.appID}
-                            className={win.z === topZ ? 'task-button is-active' : 'task-button'}
+                            className={win.z === activeZ ? 'task-button is-active' : 'task-button'}
                             onClick={() => focusApp(win.appID)}
                         >
                             {APPS.find((app) => app.id === win.appID)?.title}

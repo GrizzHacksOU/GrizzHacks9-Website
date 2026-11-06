@@ -9,44 +9,44 @@ export const APPS: AppDef[] = [
     },
     {
         id: 'registration',
-        title: 'Register',
-        icon: '/shared/assets/placeholder-icon.png',
-        url: '/apps/_template/index.html'
+        title: 'Register for GrizzHacks',
+        icon: '/shared/assets/register-icon.png',
+        url: '/apps/registration/index.html'
     },
     {
         id: 'about-us',
-        title: 'About Us',
-        icon: '/shared/assets/placeholder-icon.png',
-        url: '/apps/_template/index.html'
+        title: 'About GrizzHacks',
+        icon: '/shared/assets/aboutUs-icon.png',
+        url: '/apps/about-us/index.html'
     },
     {
         id: 'schedule',
         title: 'Schedule',
-        icon: '/shared/assets/placeholder-icon.png',
-        url: '/apps/_template/index.html'
+        icon: '/shared/assets/schedule-icon.png',
+        url: '/apps/schedule/index.html'
     },
     {
         id: 'tracks',
         title: 'Tracks',
-        icon: '/shared/assets/placeholder-icon.png',
-        url: '/apps/_template/index.html'
+        icon: '/shared/assets/tracks-icon.png',
+        url: '/apps/tracks/index.html'
     },
     {
         id: 'sponsors',
         title: 'Sponsors',
-        icon: '/shared/assets/placeholder-icon.png',
-        url: '/apps/_template/index.html'
+        icon: '',
+        url: ''
     },
     {
         id: 'faq',
         title: 'F.A.Q.',
-        icon: '/shared/assets/placeholder-icon.png',
-        url: '/apps/_template/index.html'
+        icon: '/shared/assets/faq-icon.png',
+        url: '/apps/faq/index.html'
     },
     {
         id: 'team',
         title: 'Team',
-        icon: '/shared/assets/placeholder-icon.png',
-        url: '/apps/_template/index.html'
+        icon: '/shared/assets/team-icon.png',
+        url: '/apps/team/index.html'
     },
 ];
