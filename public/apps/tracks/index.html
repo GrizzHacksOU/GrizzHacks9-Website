@@ -6,6 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="/shared/vendor/xpcss/XP.css">
+  <link rel="stylesheet" href="css/app.css">
   <title>Tracks</title>
   <script src="scripts/app.js" defer></script>
 </head>
@@ -13,14 +14,27 @@
 
 <body>
   <div id="controls">
-    <button id="prevBtn">Previous</button>
-    <button id="playBtn">Play</button>
-    <button id="nextBtn">Next</button>
-
     <label id="trackTitle" for="audio">Placeholder 1</label>
-    <audio id="audio" controls>
-      <source src="audios/placeholder.mp3">
-    </audio>
+
+    <br>
+
+    <div id="audioContainer">
+      <label id="currentTime" for="progressBar">0:00</label>
+      <div id="progressContainer">
+        <audio id="audio">
+          <source src="audios/placeholder.mp3">
+        </audio>
+        <div id="progressBar"></div>
+      </div>
+      <label id="duration" for="progressBar"></label>
+    </div>
+
+    <div id="buttons"> 
+      <button id="prevBtn">Previous</button>
+      <button id="playBtn">Play</button>
+      <button id="nextBtn">Next</button>
+    </div>
+    
   </div>
 
   
