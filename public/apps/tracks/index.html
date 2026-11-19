@@ -13,27 +13,32 @@
 
 
 <body>
+  <div id="playlist"> 
+    <button id="trackSortBtn">Tracks</button>
+    <ol id="trackList"></ol> <!-- Clickable tracks are added in JS -->
+  </div> 
+
   <div id="controls">
-    <label id="trackTitle" for="audio">Placeholder 1</label>
+    <label id="trackTitle" for="audio"></label>
 
     <br>
 
     <div id="audioContainer">
-      <label id="currentTime" for="progressBar">0:00</label>
+      <label id="currentTime" for="progressBar">--:--</label>
       <div id="progressContainer">
-        <audio id="audio">
-          <source src="audios/placeholder.mp3">
-        </audio>
+        <audio id="audio"></audio>
         <div id="progressBar"></div>
       </div>
-      <label id="duration" for="progressBar"></label>
+      <label id="duration" for="progressBar">--:--</label>
     </div>
 
-    <div id="buttons"> 
-      <button id="prevBtn">Previous</button>
-      <button id="playBtn">Play</button>
-      <button id="nextBtn">Next</button>
+
+    <div id="songControls"> 
+      <button id="prevBtn" disabled>Previous</button>
+      <button id="playBtn" disabled>Play</button>
+      <button id="nextBtn" disabled>Next</button>
     </div>
+    
     
   </div>
 
