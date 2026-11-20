@@ -1,0 +1,357 @@
+/* Event Schedule app. Placeholder styling; Design will replace colors/assets later. */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    background: #ece9d8;
+    font-family: "Pixelated MS Sans Serif", Arial, sans-serif;
+    font-size: 11px;
+    overflow: hidden;
+}
+
+.muted { color: #555; }
+
+/* ---------- layout ---------- */
+.app {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 8px;
+    padding: 8px;
+}
+
+.side {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+.side fieldset { margin: 0; padding: 6px 8px 8px; min-width: 0; }
+
+.main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+}
+
+.main menu[role=tablist] { margin: 0; }
+
+.main [role=tabpanel] {
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+}
+
+.main [role=tabpanel][hidden] { display: none; }
+
+/* ---------- mini calendar ---------- */
+.cal-title {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.cal {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    text-align: center;
+    table-layout: fixed;
+}
+
+.cal th {
+    background: #808080;
+    color: #fff;
+    font-weight: normal;
+    padding: 1px 0;
+}
+
+.cal td { padding: 2px 0; color: #000; }
+.cal td.other { color: #bbb; }
+
+.cal td.event-day {
+    cursor: pointer;
+    font-weight: bold;
+    color: #0046d5;
+    text-decoration: underline;
+}
+
+.cal td.selected {
+    background: #316ac5;
+    color: #fff;
+}
+
+.cal td.today { outline: 1px dotted #000; outline-offset: -2px; }
+
+/* ---------- clock + countdown ---------- */
+.clock {
+    font-family: "Perfect DOS VGA 437 Win", monospace;
+    font-size: 22px;
+    text-align: center;
+    background: #000;
+    color: #39ff14;
+    padding: 4px 0;
+    letter-spacing: 1px;
+}
+
+#tz { text-align: center; margin-top: 3px; }
+
+.countdown {
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.countdown .big {
+    font-family: "Perfect DOS VGA 437 Win", monospace;
+    font-size: 18px;
+    display: block;
+}
+
+/* ---------- legend ---------- */
+.legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 3px;
+}
+
+.legend li { display: flex; align-items: center; gap: 6px; }
+
+.swatch {
+    width: 12px;
+    height: 12px;
+    border: 1px solid #000;
+    flex: none;
+}
+
+/* ---------- day view ---------- */
+.day-switch {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+
+.day-switch button.is-current { font-weight: bold; }
+
+.day-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #919b9c;
+}
+
+.day-grid {
+    position: relative;
+    --hour-h: 48px;
+}
+
+.hour-row {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: var(--hour-h);
+    border-top: 1px solid #e3e3e3;
+}
+
+.hour-row::after {
+    /* half-hour line */
+    content: "";
+    position: absolute;
+    left: 52px;
+    right: 0;
+    top: 50%;
+    border-top: 1px dotted #eee;
+}
+
+.hour-label {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 48px;
+    height: 100%;
+    padding: 2px 4px;
+    text-align: right;
+    background: #ece9d8;
+    border-right: 1px solid #c0c0c0;
+    color: #333;
+}
+
+.event-block {
+    position: absolute;
+    border: 1px solid rgba(0, 0, 0, 0.45);
+    border-left-width: 4px;
+    color: #fff;
+    padding: 2px 4px;
+    overflow: hidden;
+    cursor: pointer;
+    text-align: left;
+    font: inherit;
+    line-height: 1.25;
+    box-shadow: none;
+    min-width: 0;
+    min-height: 0;
+    border-radius: 0;
+}
+
+.event-block:hover,
+.event-block:focus-visible {
+    filter: brightness(1.12);
+    outline: 1px dotted #000;
+    z-index: 3;
+}
+
+.event-block .ev-title { font-weight: bold; display: block; }
+.event-block .ev-time { opacity: 0.9; }
+.event-block.is-past { opacity: 0.55; }
+.event-block.is-now { outline: 2px solid #ff0; outline-offset: -2px; }
+
+.now-line {
+    position: absolute;
+    left: 48px;
+    right: 0;
+    border-top: 2px solid red;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.now-line::before {
+    content: "";
+    position: absolute;
+    left: -5px;
+    top: -6px;
+    border: 5px solid transparent;
+    border-left-color: red;
+}
+
+/* ---------- agenda view ---------- */
+.agenda {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid #919b9c;
+}
+
+.agenda h4 {
+    margin: 0;
+    padding: 3px 6px;
+    font-size: 11px;
+    background: #808080;
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.agenda-row {
+    display: grid;
+    grid-template-columns: 110px 14px 1fr;
+    gap: 6px;
+    align-items: center;
+    width: 100%;
+    padding: 4px 6px;
+    border: none;
+    border-bottom: 1px solid #eee;
+    background: none;
+    box-shadow: none;
+    border-radius: 0;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+    min-height: 0;
+}
+
+.agenda-row:hover,
+.agenda-row:focus-visible { background: #316ac5; color: #fff; }
+
+.agenda-row.is-past { color: #999; }
+.agenda-row.is-now { background: #ffffc0; }
+.agenda-row .where { display: block; font-size: 10px; opacity: 0.8; }
+
+.tag-now, .tag-next {
+    font-size: 9px;
+    font-weight: bold;
+    padding: 0 3px;
+    margin-left: 4px;
+    color: #fff;
+}
+.tag-now { background: red; }
+.tag-next { background: #0046d5; }
+
+/* ---------- status bar ---------- */
+.status-bar { margin: 0 8px 6px; }
+.status-bar-field {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ---------- dialog ---------- */
+.dialog-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 12px;
+}
+
+.dialog-backdrop[hidden] { display: none; }
+
+.dialog {
+    width: min(380px, 100%);
+    max-height: 100%;
+    overflow: auto;
+}
+
+.dlg-heading { margin: 0 0 8px; font-size: 14px; }
+
+.dlg-facts { border-collapse: collapse; margin-bottom: 8px; }
+.dlg-facts th { text-align: left; padding: 1px 8px 1px 0; vertical-align: top; }
+.dlg-facts td { padding: 1px 0; }
+
+.dlg-buttons {
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* ---------- small windows ---------- */
+@media (max-width: 560px), (max-height: 360px) {
+    /* Small window: stack everything and let the whole app scroll. */
+    .app {
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+    }
+    .side {
+        flex: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(160px, 100%), 1fr));
+        overflow: visible;
+    }
+    .clock { font-size: 16px; }
+    .countdown .big { font-size: 14px; }
+    .main { flex: none; height: 340px; }
+    .agenda-row { grid-template-columns: 90px 12px 1fr; }
+}

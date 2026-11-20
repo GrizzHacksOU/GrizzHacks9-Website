@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/shared/vendor/xpcss/XP.css">
+    <link rel="stylesheet" href="css/app.css">
+    <title>Event Schedule</title>
+  </head>
+  <body>
+    <div class="app">
+      <!-- Left panel: Win98 Date/Time Properties style -->
+      <aside class="side">
+        <fieldset>
+          <legend>Date</legend>
+          <div class="cal-title" id="cal-title"></div>
+          <table class="cal" id="cal" aria-label="Event calendar"></table>
+        </fieldset>
+        <fieldset>
+          <legend>Time</legend>
+          <div class="clock" id="clock">--:--:--</div>
+          <div class="muted" id="tz"></div>
+        </fieldset>
+        <fieldset>
+          <legend id="countdown-label">Countdown</legend>
+          <div class="countdown" id="countdown"></div>
+        </fieldset>
+        <fieldset class="legend-box">
+          <legend>Categories</legend>
+          <ul class="legend" id="legend"></ul>
+        </fieldset>
+      </aside>
+
+      <!-- Right panel: Outlook 2000 calendar style -->
+      <section class="main">
+        <menu role="tablist">
+          <button role="tab" id="tab-day" aria-controls="day-panel" aria-selected="true">Day</button>
+          <button role="tab" id="tab-agenda" aria-controls="agenda-panel">Agenda</button>
+        </menu>
+        <article role="tabpanel" id="day-panel">
+          <div class="day-switch" id="day-switch"></div>
+          <div class="day-scroll" id="day-scroll">
+            <div class="day-grid" id="day-grid"></div>
+          </div>
+        </article>
+        <article role="tabpanel" id="agenda-panel" hidden>
+          <div class="agenda" id="agenda"></div>
+        </article>
+      </section>
+    </div>
+
+    <div class="status-bar">
+      <p class="status-bar-field" id="status-now">Now: -</p>
+      <p class="status-bar-field" id="status-next">Next: -</p>
+    </div>
+
+    <!-- Event detail popup (Win9x dialog) -->
+    <div class="dialog-backdrop" id="dialog-backdrop" hidden>
+      <div class="window dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+        <div class="title-bar">
+          <div class="title-bar-text" id="dlg-title">Event</div>
+          <div class="title-bar-controls">
+            <button aria-label="Close" id="dlg-x"></button>
+          </div>
+        </div>
+        <div class="window-body">
+          <h3 class="dlg-heading" id="dlg-heading"></h3>
+          <table class="dlg-facts">
+            <tr><th>When:</th><td id="dlg-when"></td></tr>
+            <tr><th>Where:</th><td id="dlg-where"></td></tr>
+            <tr id="dlg-host-row"><th>Host:</th><td id="dlg-host"></td></tr>
+            <tr><th>Type:</th><td id="dlg-type"></td></tr>
+          </table>
+          <p id="dlg-desc"></p>
+          <section class="field-row dlg-buttons">
+            <button id="dlg-google">Google Calendar</button>
+            <button id="dlg-ics">iPhone / Outlook (.ics)</button>
+            <button id="dlg-ok">OK</button>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <script src="scripts/data.js"></script>
+    <script src="scripts/app.js"></script>
+  </body>
+</html>
