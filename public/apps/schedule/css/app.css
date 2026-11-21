@@ -336,6 +336,88 @@ body {
     gap: 6px;
 }
 
+/* ---------- animations ---------- */
+
+/* Boot / loading screen */
+.boot {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    background: #ece9d8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.boot[hidden] { display: none; }
+
+/* Click-through as soon as it starts fading, so it never blocks the app. */
+.boot.done {
+    pointer-events: none;
+    animation: fade-out 150ms steps(3) forwards;
+}
+
+.boot-box {
+    text-align: center;
+    display: grid;
+    gap: 6px;
+    justify-items: center;
+}
+
+.boot-title { font-weight: bold; font-size: 13px; }
+.boot-sub { color: #555; }
+
+.boot-bar {
+    width: 180px;
+    height: 16px;
+    padding: 2px;
+    background: #fff;
+    border: 1px solid #7a7a7a;
+    box-shadow: inset 1px 1px #c0c0c0;
+}
+
+/* XP-style green block progress bar that fills in chunks */
+.boot-fill {
+    height: 100%;
+    width: 0;
+    background: repeating-linear-gradient(90deg, #2fb32f 0 8px, transparent 8px 10px);
+    animation: boot-fill 600ms steps(9) forwards;
+}
+
+@keyframes boot-fill { to { width: 100%; } }
+@keyframes fade-out { to { opacity: 0; } }
+
+/* Event blocks / agenda rows slide in one after another (only on day/tab switch) */
+.day-grid.animate .event-block,
+.agenda.animate .agenda-row {
+    animation: slide-in 220ms steps(4) backwards;
+    animation-delay: calc(var(--i, 0) * 35ms);
+}
+
+@keyframes slide-in {
+    from { opacity: 0; transform: translateX(-10px); }
+}
+
+/* Dialog pops open */
+.dialog-backdrop:not([hidden]) { animation: backdrop-in 120ms ease-out; }
+.dialog-backdrop:not([hidden]) .dialog { animation: dialog-pop 160ms steps(4); }
+
+@keyframes backdrop-in { from { background: rgba(0, 0, 0, 0); } }
+@keyframes dialog-pop { from { opacity: 0; transform: scale(0.85); } }
+
+/* Clock colon blinks, "Now" line pulses */
+.clock .colon { animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { visibility: hidden; } }
+
+.now-line { animation: pulse 1.2s ease-in-out infinite alternate; }
+@keyframes pulse { to { opacity: 0.45; } }
+
+/* Respect "reduce motion" system setting */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; }
+    .boot { display: none; }
+}
+
 /* ---------- small windows ---------- */
 @media (max-width: 560px), (max-height: 360px) {
     /* Small window: stack everything and let the whole app scroll. */

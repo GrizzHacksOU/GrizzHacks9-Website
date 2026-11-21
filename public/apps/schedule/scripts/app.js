@@ -161,7 +161,9 @@
     // ---------- left panel: clock + countdown ----------
     function renderClock() {
         const t = now();
-        $("clock").textContent = clockFmt.format(t);
+        // Wrap ":" in spans so they can blink.
+        $("clock").replaceChildren(...clockFmt.format(t).split(/(:)/).map((part) =>
+            part === ":" ? el("span", { class: "colon" }, ":") : part));
 
         const tzName = tzNameFmt.formatToParts(t).find((p) => p.type === "timeZoneName")?.value || TZ;
         $("tz").textContent = simulated ? `${tzName} (SIMULATED)` : tzName;
@@ -219,9 +221,11 @@
         }, `${d.label} ${Number(d.date.slice(8))}`)));
     }
 
-    function renderDayGrid() {
+    // animate = true plays the slide-in (on day/tab switch); the once-a-minute refresh passes false.
+    function renderDayGrid(animate = false) {
         const day = S.days.find((d) => d.date === selectedDay);
         const grid = $("day-grid");
+        grid.classList.toggle("animate", animate);
         const t = now();
         const { current, next } = liveState(t);
         const hours = day.endHour - day.startHour;
@@ -243,6 +247,7 @@
             return { ev, s, e };
         }).filter((it) => it.s < rangeEnd);
 
+        let blockIndex = 0;
         for (const { ev, s, e, col, cols } of layoutColumns(items)) {
             const cat = catOf(ev);
             const classes = ["event-block"];
@@ -263,6 +268,7 @@
             },
             el("span", { class: "ev-title" }, ev.title, next === ev ? el("span", { class: "tag-next" }, "NEXT") : null),
             height > 30 ? el("span", { class: "ev-time" }, fmtRange(ev)) : null));
+            nodes[nodes.length - 1].style.setProperty("--i", blockIndex++);
         }
 
         // "Now" line
@@ -287,10 +293,12 @@
     }
 
     // ---------- right panel: agenda view ----------
-    function renderAgenda() {
+    function renderAgenda(animate = false) {
         const t = now();
         const { current, next } = liveState(t);
         const nodes = [];
+        let rowIndex = 0;
+        $("agenda").classList.toggle("animate", animate);
         for (const d of S.days) {
             const dayEvents = events.filter((ev) => ev.day === d.date);
             if (!dayEvents.length) continue;
@@ -307,6 +315,7 @@
                         current.includes(ev) ? el("span", { class: "tag-now" }, "NOW") : null,
                         next === ev ? el("span", { class: "tag-next" }, "NEXT") : null,
                         el("span", { class: "where" }, ev.location))));
+                nodes[nodes.length - 1].style.setProperty("--i", rowIndex++);
             }
         }
         $("agenda").replaceChildren(...nodes);
@@ -333,7 +342,13 @@
             tb.tabIndex = on ? 0 : -1;
             $(tb.getAttribute("aria-controls")).hidden = !on;
         }
-        if (tab.id === "tab-day") scrollDayToInteresting();
+        // Re-render the shown panel so its rows slide in.
+        if (tab.id === "tab-day") {
+            renderDayGrid(true);
+            scrollDayToInteresting();
+        } else {
+            renderAgenda(true);
+        }
     }
     tabs.forEach((tb, i) => {
         tb.addEventListener("click", () => selectTab(tb));
@@ -349,8 +364,7 @@
         selectedDay = date;
         renderCalendar();
         renderDaySwitch();
-        renderDayGrid();
-        selectTab($("tab-day"));
+        selectTab($("tab-day")); // renders the day grid with the slide-in
     }
 
     // ---------- event dialog ----------
@@ -461,4 +475,16 @@
     tick();
     selectTab($("tab-day"));
     setInterval(tick, 1000);
+
+    // Boot screen: show "Loading..." briefly, fade it out, then slide the events in.
+    const boot = $("boot");
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        boot.hidden = true;
+    } else {
+        setTimeout(() => {
+            boot.classList.add("done");
+            boot.addEventListener("animationend", () => (boot.hidden = true), { once: true });
+            selectTab(tabs.find((tb) => tb.getAttribute("aria-selected") === "true"));
+        }, 650);
+    }
 })();
