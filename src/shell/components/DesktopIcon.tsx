@@ -4,7 +4,7 @@ interface DesktopIconProps {
     app: AppDef;
     selected: boolean;
     onSelect: (id: string) => void;
-    onOpen: (id: string) => void;
+    onOpen: (id: string, fromRect?: DOMRect) => void;
 }
 
 export default function DesktopIcon({ app, selected, onSelect, onOpen} : DesktopIconProps) {
@@ -12,7 +12,7 @@ export default function DesktopIcon({ app, selected, onSelect, onOpen} : Desktop
         <button
             type="button"
             className={selected ? 'desktop-icon is-selected' : 'desktop-icon'}
-            onClick={() => onSelect(app.id)}
+            onClick={(e) => { onSelect(app.id); onOpen(app.id, e.currentTarget.getBoundingClientRect()); }}
             onDoubleClick={() => onOpen(app.id)}
         >
             <img src={app.icon} alt="" />

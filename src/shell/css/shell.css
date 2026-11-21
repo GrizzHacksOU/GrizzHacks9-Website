@@ -15,6 +15,35 @@ body {
     display: grid;
     grid-template-rows: 1fr auto;
     height: 100%;
+    position: relative;
+}
+
+/* ---- Win95 zoom-outline animation (see ZoomOutline.tsx) ---- */
+.zoom-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100000;
+}
+
+.zoom-outline {
+    position: absolute;
+    border: 2px dotted #fff;
+    mix-blend-mode: difference;
+}
+
+/* Windows appear right after the outline finishes (200ms = ZOOM_MS).
+   Also replays when a minimized window is restored. */
+.window-layer > .window {
+    animation: window-appear 0s 200ms backwards;
+}
+
+@keyframes window-appear {
+    from { visibility: hidden; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .window-layer > .window { animation: none; }
 }
 
 .desktop {

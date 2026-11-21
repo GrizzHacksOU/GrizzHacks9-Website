@@ -3,7 +3,7 @@ import { APPS } from "../data/apps";
 import DesktopIcon from "./DesktopIcon";
 
 interface DesktopIconsProps {
-    onOpenApp: (id: string) => void;
+    onOpenApp: (id: string, fromRect?: DOMRect) => void;
 }
 
 export default function DesktopIcons({onOpenApp}: DesktopIconsProps) {
