@@ -1,0 +1,158 @@
+
+/* General page styling */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 12px;
+    background-color: #ece9d8;
+    font-family: Tahoma, Verdana, Arial, sans-serif;
+    font-size: 12px;
+    color: #222;
+}
+
+/* Page heading */
+
+body > span,
+h1,
+h2 {
+    display: block;
+    background: linear-gradient(
+        to bottom,
+        #397bea,
+        #245edb
+    );
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 10px;
+    margin: 0 0 12px;
+    border: 1px solid #174782;
+}
+
+/* Search bar */
+
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.search-container label {
+    font-weight: bold;
+}
+
+#searchBar {
+    flex: 1;
+    min-width: 0;
+    padding: 7px;
+    font-family: inherit;
+    font-size: 12px;
+    background-color: white;
+    border: 1px solid #7f9db9;
+    border-radius: 0;
+}
+
+#searchBar:focus {
+    outline: 1px solid #245edb;
+    border-color: #245edb;
+}
+
+/* Team dropdown containers */
+
+details {
+    margin-bottom: 6px;
+    border: 1px solid #aca899;
+    background-color: white;
+}
+
+/* Team dropdown headings */
+
+summary {
+    padding: 8px 10px;
+    background: linear-gradient(
+        to bottom,
+        #edf3fc,
+        #d5e1f2
+    );
+    color: #174782;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+}
+
+summary:hover {
+    background: #c7d9f2;
+}
+
+details[open] summary {
+    border-bottom: 1px solid #aca899;
+}
+
+/* Member lists */
+
+details ul {
+    list-style: none;
+    margin: 0;
+    padding: 4px;
+}
+
+details li {
+    margin: 2px 0;
+}
+
+/* Member profile links */
+
+details li a {
+    display: block;
+    padding: 6px 10px;
+    color: #174782;
+    text-decoration: none;
+    border: 1px solid transparent;
+}
+
+/* Small retro status indicator */
+
+details li a::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 8px;
+    background-color: #69ad45;
+    border: 1px solid #47852b;
+    border-radius: 50%;
+}
+
+/* Hover and keyboard effects */
+
+details li a:hover,
+details li a:focus-visible {
+    background-color: #dce8fa;
+    border: 1px solid #a3bde2;
+}
+
+details li a:active {
+    background-color: #316ac5;
+    color: white;
+}
+
+/* No search results */
+
+#noResults {
+    padding: 12px;
+    background-color: #fff;
+    border: 1px solid #aca899;
+    color: #666;
+    text-align: center;
+}
+
+/* Preserve JavaScript search functionality */
+
+[hidden] {
+    display: none !important;
+}

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/shared/vendor/xpcss/XP.css">
+    <link rel="stylesheet" href="css/app.css">
+    <title>Teams</title>
+    <script src="scripts/data.js" defer></script>
+    <script src="scripts/app.js" defer></script>
+  </head>
+  <body>
+    <span>Meet the Team</span>
+    <div class="search-container">
+      <label for="searchBar">Search:</label>
+      <input
+          type="search"
+          id="searchBar"
+          placeholder="Find a person..."
+      />
+    </div>
+
+    <p id="noResults" hidden>No matching people found.</p>
+     
+      <details>
+        <summary>Eboard</summary>
+        <ul id="team1-members"></ul>
+      </details>
+      <details>
+        <summary>Tech</summary> 
+        <ul id="team2-members"></ul>
+      </details>
+      <details>
+        <summary>Design</summary>
+        <ul id="team3-members"></ul>
+      </details>
+      <details>
+        <summary>Logistics</summary>
+        <ul id="team4-members"></ul>
+      </details>
+      <details>
+        <summary>Marketing</summary>
+        <ul id="team5-members"></ul>
+      </details>
+      <details>
+        <summary>Sponserships</summary>
+        <ul id="team6-members"></ul>
+      </details>
+
+      <script>
+        document.getElementById("person1").addEventListener(
+            "click",
+            function () {
+                window.parent.postMessage({
+                    type: "OPEN_PROFILE",
+                    personId: "person1"
+                }, window.location.origin);
+            }
+        );
+      </script>
+  </body>
+</html>

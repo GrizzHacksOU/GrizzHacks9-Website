@@ -1,0 +1,78 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+
+    <title>Team Member Profile</title>
+
+    <script src="scripts/data.js" defer></script>
+    <script src="scripts/profile.js" defer></script>
+    <link rel="stylesheet" href="css/profile.css">
+</head>
+
+<body>
+    <main class="profile">
+
+        <!-- Profile picture and basic information -->
+        <section class="profile-header">
+
+            <div class="profile-picture">
+                <img
+                    id="profilePicture"
+                    alt="Profile picture"
+                    width="200"
+                    height="200"
+                    hidden
+                >
+
+                <p id="picturePlaceholder">
+                    Profile Picture
+                </p>
+            </div>
+
+            <div class="profile-info">
+                <h1 id="profileName">Name</h1>
+
+                <p id="profileRole">Role</p>
+
+                <p id="profileMajor">
+                    Major and Graduation Year
+                </p>
+            </div>
+
+        </section>
+
+        <!-- Links -->
+        <section class="profile-section">
+            <h2>Links</h2>
+
+            <ul id="profileLinks"></ul>
+        </section>
+
+        <!-- Away message -->
+        <section class="profile-section">
+            <h2>Away Message / Favorite Quote</h2>
+
+            <p id="profileQuote"></p>
+        </section>
+
+        <!-- Fun fact -->
+        <section class="profile-section">
+            <h2>Fun Fact</h2>
+
+            <p id="profileFunFact"></p>
+        </section>
+
+        <!-- Temporary navigation -->
+        <a href="index.html" target="_self">
+            Back to Teams
+        </a>
+
+    </main>
+</body>
+</html>
