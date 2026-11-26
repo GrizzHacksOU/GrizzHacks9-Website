@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/shared/vendor/xpcss/XP.css">
+    <link rel="stylesheet" href="/apps/faq/css/app.css">
+    <title>F.A.Q.</title>
+  </head>
+  <body>
+    <div id="forum">
+      <header class="forum-header">
+        <h1>GrizzHacks Community Forums</h1>
+        <p class="tagline">Frequently Asked Questions &middot; Est. 11 BG (Before GTAVI)</p>
+      </header>
+
+      <!-- breadcrumbs + page content get filled in by app.js -->
+      <nav id="breadcrumbs" class="breadcrumbs"></nav>
+      <main id="content"></main>
+
+      <footer class="forum-footer">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      </footer>
+    </div>
+
+    <!-- data has to load first since app.js uses it -->
+    <script src="/apps/faq/scripts/data.js"></script>
+    <script src="/apps/faq/scripts/app.js"></script>
+  </body>
+</html>
