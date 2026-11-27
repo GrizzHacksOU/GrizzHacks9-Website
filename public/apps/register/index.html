@@ -1,0 +1,643 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GrizzHacks Registration Wizard</title>
+  <link rel="stylesheet" href="/shared/vendor/xpcss/XP.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.7.16/vue.min.js"></script>
+
+  <style>
+
+    /* Windows 98 / XP Form Styles */
+
+    :root                                   { --win-face: #d4d0c8; --win-light: #ffffff; --win-highlight: #dfdfdf; --win-shadow: #808080; --win-dark: #404040; --win-ink: #000000; --win-teal: #468887; }
+    *                                       { box-sizing: border-box; }
+    html, body                              { width: 100%; height: 100%; min-width: 0; margin: 0; padding: 0; }
+    body                                    { overflow: hidden; font: 11px Tahoma, "MS Sans Serif", Verdana, sans-serif; color: var(--win-ink); }
+    [v-cloak]                               { display: none; }
+
+    /* Main Layout */
+
+    #vueApp                                 { width: 100%; height: 100%; min-height: 0; display: flex; justify-content: space-evenly; align-items: center; gap: 2%; background: #d6d3ce; overflow: hidden; }
+    .hero-container, .content-container     { height: 90%; min-height: 0; min-width: 0; overflow: hidden; box-shadow: inset -1px -1px var(--win-light), inset 1px 1px #0a0a0a, inset -2px -2px var(--win-highlight), inset 2px 2px var(--win-shadow); }
+    .hero-container                         { width: 25%; flex: 0 0 25%; position: relative; background: var(--win-teal); }
+    .hero-icon-container                    { min-width: 150%; height: 100%; display: flex; justify-content: center; align-items: center; }
+    .hero-icon-container svg                { width: 75%; height: auto; max-height: 100%; }
+    .hero-caption                           { position: absolute; bottom: 22px; left: 20px; right: 20px; color: white; font-size: 11px; line-height: 1.5; }
+    .hero-caption strong                    { display: block; font-size: 15px; font-weight: normal; margin-bottom: 3px; }
+    .content-container                      { width: 65%; flex: 0 1 65%; display: flex; flex-direction: column; padding: 4px; background: var(--win-face); }
+    .wizard-surface                         { display: flex; flex: 1 1 auto; flex-direction: column; min-height: 0; min-width: 0; overflow: hidden; background: var(--win-face); }
+
+    /* Wizard Header */
+
+    .wizard-header                          { flex: 0 0 auto; background: #ffffff; padding: 16px 19px 13px; border-bottom: 1px solid var(--win-shadow); box-shadow: 0 1px 0 var(--win-light); }
+    .wizard-eyebrow                         { margin-bottom: 5px; color: #555; font: bold 10px Tahoma, Verdana, sans-serif; letter-spacing: 0; text-transform: none; }
+    .wizard-title                           { margin: 0 0 4px; color: black; font-size: 14px; font-weight: bold; line-height: 1.3; }
+    .wizard-description                     { margin: 0; color: #222; font-size: 11px; line-height: 1.45; }
+    .wizard-progress                        { width: 245px; max-width: 100%; height: 15px; padding: 3px; margin-top: 12px; background: white; border: 0; box-shadow: inset -1px -1px #fff, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #404040; }
+    .wizard-progress-fill                   { height: 100%; background: repeating-linear-gradient(to right, #2a9b57 0, #2a9b57 9px, white 9px, white 11px); transition: none; }
+
+    /* Wizard Body */
+
+    .wizard-body                            { flex: 1 1 auto; min-height: 0; overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; background: var(--win-face); padding: 18px 19px 14px; scrollbar-color: #b4b0a9 #e5e3de; }
+    .wizard-body::-webkit-scrollbar         { width: 16px; }
+    .wizard-body::-webkit-scrollbar-track   { background: #e5e3de; }
+    .wizard-body::-webkit-scrollbar-thumb   { background: #d4d0c8; border: 1px solid #808080; box-shadow: inset 1px 1px white, inset -1px -1px #404040; }
+    .page                                   { min-width: 0; max-width: 740px; }
+    .page-heading                           { margin: 0 0 12px; font: bold 12px Tahoma, Verdana, sans-serif; }
+    .page-text                              { margin: 0 0 16px; line-height: 1.5; overflow-wrap: anywhere; }
+    .quiet-text                             { color: #454545; line-height: 1.5; }
+
+    /* Form Groups and Labels */
+
+    .installer-group, .review-group         { min-width: 0; margin: 0 0 16px; padding: 13px 12px 9px; border: 1px solid var(--win-shadow); border-radius: 0; box-shadow: 1px 1px 0 white; background: transparent; }
+    .installer-group legend, .review-group legend { padding: 0 5px; color: #000; background: var(--win-face); font-size: 11px; font-weight: normal; }
+    .form-row                               { display: flex; align-items: flex-start; gap: 11px; margin: 0 0 10px; }
+    .form-row:last-child                    { margin-bottom: 0; }
+    .form-row > label                       { width: 150px; flex: 0 0 150px; padding-top: 5px; color: black; line-height: 1.35; }
+    .form-row label .required, .check-row .required, .required { color: #7f0000; font-weight: bold; }
+    .control-stack                          { min-width: 0; flex: 1 1 auto; max-width: 450px; }
+
+    /* Text Inputs and Textareas */
+
+    #vueApp .form-row input:not([type="file"]), #vueApp .form-row textarea, #vueApp .form-row select { display: block; width: 100%; max-width: 390px; min-width: 0; height: 23px; min-height: 0; margin: 0; padding: 3px 5px; border: 0; border-radius: 0; background: white; color: black; font: 11px Tahoma, "MS Sans Serif", Verdana, sans-serif; box-shadow: inset -1px -1px white, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #404040; outline: none; }
+    #vueApp .form-row input::placeholder, #vueApp .form-row textarea::placeholder { color: #777; opacity: 1; }
+    #vueApp .form-row input:not([type="file"]):focus, #vueApp .form-row textarea:focus, #vueApp .form-row select:focus { outline: 1px dotted black; outline-offset: -4px; }
+    #vueApp .form-row input[type="number"]  { appearance: textfield; -moz-appearance: textfield; }
+    #vueApp .form-row input[type="number"]::-webkit-inner-spin-button, #vueApp .form-row input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    #vueApp .form-row textarea              { height: auto; min-height: 86px; max-width: 100%; padding: 6px; line-height: 1.4; resize: vertical; }
+    .field-help                             { margin: 5px 0 0; color: #454545; font-size: 10px; line-height: 1.45; }
+    .group-lead                             { margin: 0 0 11px; color: #333; line-height: 1.5; }
+    .file-name                              { color: #222; }
+
+    /* Dropdown Menus */
+
+    .select-wrap                            { display: block; position: relative; max-width: 390px; }
+    #vueApp .form-row .select-wrap select   { max-width: none; padding-right: 26px; cursor: default; -webkit-appearance: none; appearance: none; }
+    .select-wrap::before                    { content: ""; position: absolute; z-index: 1; pointer-events: none; right: 2px; top: 2px; bottom: 2px; width: 19px; background: var(--win-face); box-shadow: inset -1px -1px #404040, inset 1px 1px #fff, inset -2px -2px #808080, inset 2px 2px #dfdfdf; }
+    .select-wrap::after                     { content: ""; position: absolute; z-index: 2; pointer-events: none; right: 8px; top: 10px; width: 0; height: 0; border-top: 5px solid black; border-left: 4px solid transparent; border-right: 4px solid transparent; }
+
+    /* Checkboxes */
+
+    #vueApp .check-row                      { display: flex; align-items: flex-start; gap: 9px; margin: 11px 0; line-height: 1.5; }
+    #vueApp .check-row input[type="checkbox"] { position: relative; appearance: none; -webkit-appearance: none; flex: 0 0 14px; width: 14px; height: 14px; margin: 1px 0 0; border: 0; border-radius: 0; background: white; box-shadow: inset -1px -1px white, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #404040; cursor: pointer; }
+    #vueApp .check-row input[type="checkbox"]:checked::after { content: ""; position: absolute; left: 4px; top: 3px; width: 6px; height: 3px; transform: rotate(-45deg); border-left: 2px solid black; border-bottom: 2px solid black; }
+    #vueApp .check-row input[type="checkbox"]:focus-visible { outline: 1px dotted black; outline-offset: 2px; }
+    .check-row label                        { min-width: 0; display: block; cursor: pointer; }
+
+    /* File Picker */
+
+    .file-picker-row                        { display: flex; gap: 7px; align-items: center; max-width: 390px; }
+    #vueApp .file-picker-row .file-value    { min-width: 0; flex: 1 1 auto; color: #333; }
+    .hidden-file-input                      { position: absolute; width: 1px; height: 1px; padding: 0; opacity: 0; overflow: hidden; clip-path: inset(50%); }
+
+    /* Review and Completion Pages */
+
+    .review-group                           { padding-top: 10px; }
+    .review-row                             { display: flex; gap: 12px; padding: 6px 0; line-height: 1.4; border-bottom: 1px solid #b9b6ae; }
+    .review-row:last-child                  { border-bottom: 0; }
+    .review-row dt                          { width: 150px; flex: 0 0 150px; color: #222; }
+    .review-row dd                          { flex: 1 1 auto; min-width: 0; margin: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
+    .review-note, .review-data, .placeholder { padding: 9px 11px; color: black; background: #f6f6f6; line-height: 1.5; border: 0; border-radius: 0; box-shadow: inset -1px -1px white, inset 1px 1px #808080, inset -2px -2px #dfdfdf, inset 2px 2px #404040; }
+    .step-list                              { margin: 7px 0 4px; padding-left: 24px; line-height: 1.9; }
+    .finish-icon                            { width: 38px; height: 38px; margin-bottom: 16px; display: grid; place-items: center; background: var(--win-face); color: #000; font-size: 21px; box-shadow: inset -1px -1px #404040, inset 1px 1px white, inset -2px -2px #808080, inset 2px 2px #dfdfdf; }
+
+    /* Footer and Navigation Buttons */
+
+    .wizard-footer                          { display: flex; flex: 0 0 auto; align-items: center; justify-content: space-between; gap: 10px; min-height: 55px; padding: 10px 14px; background: var(--win-face); border-top: 1px solid #808080; box-shadow: inset 0 1px white; }
+    .footer-note                            { font-size: 10px; color: #3e3e3e; }
+    .button-group                           { display: flex; gap: 8px; align-items: center; justify-content: flex-end; margin-left: auto; }
+    #vueApp .wizard-button                  { display: inline-block; min-width: 82px; min-height: 25px; margin: 0; padding: 4px 12px; border: 0; border-radius: 0; background: var(--win-face); color: black; font: 11px Tahoma, "MS Sans Serif", Verdana, sans-serif; text-align: center; cursor: pointer; white-space: nowrap; box-shadow: inset -1px -1px #404040, inset 1px 1px white, inset -2px -2px #808080, inset 2px 2px #dfdfdf; }
+    #vueApp .wizard-button:hover            { background: #e0ddd6; }
+    #vueApp .wizard-button:active           { padding-top: 5px; padding-left: 13px; padding-right: 11px; padding-bottom: 3px; background: #c6c3bc; box-shadow: inset 1px 1px #404040, inset -1px -1px white, inset 2px 2px #808080; }
+    #vueApp .wizard-button:focus-visible    { outline: 1px dotted black; outline-offset: -4px; }
+    #vueApp .wizard-button:disabled         { color: #808080; cursor: default; text-shadow: 1px 1px white; }
+    #vueApp .wizard-button.primary          { box-shadow: inset -1px -1px #404040, inset 1px 1px white, inset -2px -2px #808080, inset 2px 2px #dfdfdf, 0 0 0 1px #4c4c4c; }
+    #vueApp .wizard-button.primary:active   { box-shadow: inset 1px 1px #404040, inset -1px -1px white, inset 2px 2px #808080, 0 0 0 1px #4c4c4c; }
+
+    /* Responsive Layout */
+
+    @media (max-width: 740px) {
+      #vueApp                                 { flex-direction: column; justify-content: flex-start; align-items: stretch; gap: 8px; padding: 8px; }
+      .hero-container                         { width: 100%; height: 90px; flex: 0 0 90px; }
+      .hero-icon-container                    { min-width: 0; width: 100%; justify-content: flex-start; padding-left: 16px; }
+      .hero-icon-container svg                { width: 91px; max-height: 85%; }
+      .hero-caption                           { left: 133px; right: 10px; bottom: 50%; transform: translateY(50%); }
+      .hero-caption strong                    { font-size: 14px; }
+      .content-container                      { width: 100%; height: auto; min-height: 0; flex: 1 1 auto; }
+      .wizard-header                          { padding: 13px 15px 11px; }
+      .wizard-body                            { padding: 15px; }
+      .wizard-footer                          { min-height: 50px; padding: 8px 11px; }
+    }
+
+    @media (max-width: 510px) {
+      .form-row                               { flex-direction: column; align-items: stretch; gap: 4px; margin-bottom: 12px; }
+      .form-row > label                       { width: auto; flex: none; padding-top: 0; }
+      .control-stack                          { flex: 1 1 auto; width: 100%; max-width: none; }
+      #vueApp .form-row input:not([type="file"]), #vueApp .form-row textarea, #vueApp .form-row select, .select-wrap { max-width: none; }
+      .installer-group                        { padding: 10px 10px 8px; }
+      .review-row                             { flex-direction: column; gap: 2px; }
+      .review-row dt                          { width: auto; flex: none; font-weight: bold; }
+      .footer-note                            { display: none; }
+      .wizard-title                           { font-size: 13px; }
+      .hero-icon-container svg                { width: 74px; }
+      .hero-caption                           { left: 111px; }
+      #vueApp .wizard-button                  { min-width: 75px; padding: 4px 9px; }
+    }
+
+    @media (max-height: 530px) {
+      .hero-container                         { height: 62px; flex-basis: 62px; }
+      .wizard-header                          { padding-top: 8px; padding-bottom: 9px; }
+      .wizard-progress                        { margin-top: 7px; }
+      .wizard-body                            { padding-top: 10px; padding-bottom: 10px; }
+    }
+
+    @media (max-width: 740px) and (max-height: 430px) {
+      .hero-container                         { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="vueApp" v-cloak>
+    <aside class="hero-container" aria-label="Installer branding">
+      <div class="hero-icon-container">
+        <!-- Original SVG artwork, unchanged. -->
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 318 213" aria-hidden="true">
+          <path d="M147.4 25.5C144.52 28.63 139 30.15 135.33 32.18C127.92 36.27 120.28 40.47 112.62 44.16C109.9 45.48 103.25 50.37 100.49 50.28C97.89 50.19 91.65 45.47 88.98 44.19C80.71 40.22 72.51 35.85 64.57 31.26C61.22 29.32 56.99 28.13 54.05 25.5C57.32 22.44 62.71 20.84 66.59 18.76C73.46 15.05 80.34 11.39 87.21 7.73C90.12 6.19 97.63 0.96 100.51 0.76C103 0.58 109.9 5.52 112.42 6.77C120.07 10.57 127.53 15.27 135.31 18.84C138.95 20.5 144.68 22.53 147.4 25.5ZM316.88 3.99C316.88 20.5 316.88 37 316.88 53.5C301.42 61.68 285.96 69.86 270.5 78.03C269.08 76.65 269.82 67.56 269.82 65.17C269.82 52.93 269.26 40.53 269.83 28.33C285.51 20.22 301.19 12.1 316.88 3.99ZM95.98 52.5C93.52 55.73 87.63 57.35 84.11 59.27C75.74 63.82 67.15 68.31 58.73 72.87C55.88 74.42 51.82 75.51 49.5 77.81C47.14 76.14 44.21 75.18 41.67 73.82C32.59 68.98 23.61 64.17 14.58 59.25C11.8 57.73 4.29 55.05 2.77 52.5C5.79 50.05 10.14 48.48 13.59 46.77C21.89 42.66 29.66 37.85 37.98 33.81C40.55 32.56 46.65 27.99 49.17 27.97C51.8 27.95 59.85 33.25 62.42 34.75C69.76 39.03 77.74 42.98 85.32 46.83C88.63 48.51 93.23 50 95.98 52.5ZM214.83 53.24C215.94 56.88 215.16 61.68 215.16 65.5C215.17 73.94 215.16 82.39 215.16 90.83C215.16 94 216.44 101.01 214.5 103.5C199.04 95.17 183.58 86.83 168.12 78.5C168.12 62.06 168.12 45.61 168.12 29.17C183.69 37.19 199.26 45.21 214.83 53.24ZM47.89 81.5C47.89 97.97 47.89 114.43 47.89 130.9C32.21 122.77 16.53 114.63 0.85 106.5C0.85 89.94 0.85 73.39 0.85 56.83C16.53 65.06 32.21 73.28 47.89 81.5ZM316.48 58.17C316.48 74.61 316.48 91.06 316.48 107.5C300.82 115.61 285.16 123.72 269.49 131.83C269.49 115.39 269.49 98.94 269.49 82.5C271.54 79.95 276.7 78.3 279.68 76.83C287.94 72.77 296.2 68.2 304.25 63.78C307 62.27 313.67 57.85 316.48 58.17ZM152.5 82.14C154.31 85.07 153.07 91.71 153.07 95.17C153.07 103.5 153.07 111.83 153.07 120.17C153.07 124.03 153.8 128.76 152.82 132.5C137.38 140.66 121.94 148.83 106.5 156.99C105.39 155.67 105.93 152.86 105.93 151.17C105.94 146.17 105.93 141.17 105.93 136.17C105.93 129.39 105.93 122.61 105.93 115.83C105.93 113.51 105.14 109.4 106.15 107.29C107.06 105.38 115.69 101.93 117.89 100.73C125.62 96.51 133.36 92 141.25 88.12C144.79 86.38 149.56 84.73 152.5 82.14ZM168.12 83.1C183.8 91.24 199.48 99.37 215.16 107.5C215.22 119.72 215.17 131.94 215.17 144.17C215.17 146.78 215.92 155.53 214.5 157.16C199.04 148.94 183.58 140.72 168.12 132.5C168.12 116.03 168.12 99.57 168.12 83.1ZM265.5 82.91C266.85 84.32 266.17 92.46 266.16 94.83C266.15 103.5 266.17 112.17 266.17 120.83C266.16 124.44 267.05 129.38 265.83 132.77C250.26 140.77 234.68 148.77 219.1 156.77C219.1 140.26 219.1 123.75 219.1 107.24C234.57 99.13 250.03 91.02 265.5 82.91ZM316.5 111.24C318.35 114.16 317.06 127.72 317.06 131.83C317.06 138.61 317.07 145.39 317.06 152.17C317.06 154.67 317.82 158.64 316.8 160.96C316.06 162.65 305.93 167.15 303.76 168.22C292.56 173.75 281.32 179.75 270.5 186C269.4 184.69 269.93 181.86 269.93 180.17C269.94 175.17 269.94 170.17 269.94 165.17C269.94 158.39 269.95 151.61 269.94 144.83C269.93 142.4 269.19 138.5 270.09 136.24C270.75 134.56 279.66 130.93 281.63 129.79C289.31 125.36 297.61 121.62 305.27 117.13C308.82 115.05 313.31 113.84 316.5 111.24ZM0.95 111.68C16.58 119.84 32.2 128.01 47.83 136.17C48.64 139.8 48.07 144.1 48.07 147.83C48.07 156.39 48.07 164.94 48.07 173.5C48.07 176.06 48.82 184.45 47.5 186.12C31.98 177.91 16.46 169.71 0.95 161.5C0.95 144.89 0.95 128.29 0.95 111.68ZM214.89 161.5C214.89 177.97 214.89 194.44 214.89 210.91C199.21 202.77 183.53 194.64 167.85 186.5C167.93 174.39 167.83 162.28 167.83 150.17C167.83 147.4 166.99 138.6 168.47 136.83C183.94 145.06 199.42 153.28 214.89 161.5ZM152.5 137.16C154.24 139.96 153.07 146.2 153.07 149.5C153.07 158.28 153.07 167.06 153.07 175.83C153.07 179.29 153.97 184.28 152.71 187.5C137.31 195.65 121.9 203.81 106.5 211.96C105.27 210.75 105.82 207.84 105.82 206.17C105.82 200.94 105.83 195.72 105.83 190.5C105.83 183.83 105.83 177.17 105.83 170.5C105.83 168.27 105.05 164.23 106 162.22C106.78 160.56 115.67 156.89 117.66 155.82C124.81 151.95 132.24 148.2 139.28 144.13C143.56 141.65 148.41 139.98 152.5 137.16ZM53.11 138.1C68.79 146.23 84.46 154.37 100.14 162.5C100.44 174.7 100.22 186.96 100.17 199.17C100.16 201.75 100.91 210.57 99.5 212.15C84.04 204.01 68.57 195.88 53.11 187.74C53.11 171.2 53.11 154.65 53.11 138.1Z" fill="#391964" fill-rule="evenodd" stroke="#391964" stroke-width="0.25" stroke-linejoin="round" />
+        </svg>
+      </div>
+      <div class="hero-caption">
+        <strong>GrizzHacks Registration</strong>
+        Follow the steps to apply.
+      </div>
+    </aside>
+
+    <main class="content-container">
+      <!-- Everything on the right, including form controls, is INSIDE this inset panel. -->
+      <div class="wizard-surface">
+
+      <header class="wizard-header">
+        <div class="wizard-eyebrow">{{ currentStep === lastStep ? 'COMPLETE' : 'STEP ' + (currentStep + 1) + ' OF ' + (steps.length - 1) }}</div>
+        <h1 class="wizard-title">{{ steps[currentStep].title }}</h1>
+        <p class="wizard-description">{{ steps[currentStep].description }}</p>
+        <div class="wizard-progress" role="progressbar" :aria-valuenow="progressPercent" aria-valuemin="0" aria-valuemax="100" aria-label="Application progress">
+          <div class="wizard-progress-fill" :style="{ width: progressPercent + '%' }"></div>
+        </div>
+      </header>
+
+      <div class="wizard-body">
+        <!-- PAGE 1: Welcome -->
+        <section v-show="currentStep === 0" class="page" aria-label="Welcome">
+          <h2 class="page-heading">Welcome to GrizzHacks</h2>
+          <p class="page-text">This registration wizard will guide you through the GrizzHacks application. Select <strong>Next</strong> to get started.</p>
+          <fieldset class="installer-group">
+            <legend>Application sections</legend>
+            <ol class="step-list">
+              <li>Contact information</li>
+              <li>Personal background</li>
+              <li>Education</li>
+              <li>Event preferences</li>
+              <li>Profiles &amp; resume</li>
+              <li>Motivation &amp; agreements</li>
+              <li>Review</li>
+            </ol>
+          </fieldset>
+          <p class="quiet-text">You can use <strong>Back</strong> and <strong>Next</strong> to edit your answers. This version is a front-end form only; it does not submit your application to a server.</p>
+        </section>
+
+        <!-- PAGE 2: Columns A–D (contact information) -->
+        <section v-show="currentStep === 1" class="page" aria-label="Contact information">
+          <h2 class="page-heading">Contact information</h2>
+          <fieldset class="installer-group">
+            <legend>How can we reach you?</legend>
+            <div class="form-row">
+              <label for="firstName">First name <span class="required">*</span></label>
+              <div class="control-stack"><input id="firstName" type="text" v-model.trim="formData.firstName" autocomplete="given-name" required /></div>
+            </div>
+            <div class="form-row">
+              <label for="lastName">Last name <span class="required">*</span></label>
+              <div class="control-stack"><input id="lastName" type="text" v-model.trim="formData.lastName" autocomplete="family-name" required /></div>
+            </div>
+            <div class="form-row">
+              <label for="phone">Phone number <span class="required">*</span></label>
+              <div class="control-stack"><input id="phone" type="tel" v-model.trim="formData.phone" autocomplete="tel" placeholder="+1 (555) 555-1234" required /></div>
+            </div>
+            <div class="form-row">
+              <label for="email">Email address <span class="required">*</span></label>
+              <div class="control-stack"><input id="email" type="email" v-model.trim="formData.email" autocomplete="email" placeholder="you@example.com" required /></div>
+            </div>
+          </fieldset>
+        </section>
+
+        <!-- PAGE 3: Columns E–H (personal background) -->
+        <section v-show="currentStep === 2" class="page" aria-label="Personal background">
+          <h2 class="page-heading">Personal background</h2>
+          <fieldset class="installer-group">
+            <legend>About you</legend>
+            <div class="form-row">
+              <label for="age">Age <span class="required">*</span></label>
+              <div class="control-stack"><input id="age" type="number" min="1" max="120" step="1" v-model.number="formData.age" placeholder="Age" required /></div>
+            </div>
+            <div class="form-row">
+              <label for="gender">Gender</label>
+              <div class="control-stack">
+                <span class="select-wrap"><select id="gender" v-model="formData.gender">
+                  <option value="">Select an option</option>
+                  <option>Male</option>
+                  <option>Female</option>
+                  <option>Non-binary</option>
+                  <option>Prefer Not to Answer</option>
+                  <option>Self-describe</option>
+                </select></span>
+              </div>
+            </div>
+            <div class="form-row" v-if="formData.gender === 'Self-describe'">
+              <label for="genderOther">Gender (self-describe)</label>
+              <div class="control-stack"><input id="genderOther" type="text" v-model.trim="formData.genderOther" /></div>
+            </div>
+            <div class="form-row">
+              <label for="ethnicity">Race / ethnicity</label>
+              <div class="control-stack">
+                <input id="ethnicity" type="text" v-model.trim="formData.ethnicity" list="ethnicitySuggestions" placeholder="Enter or choose a response" />
+                <datalist id="ethnicitySuggestions">
+                  <option value="Asian / Pacific Islander"></option>
+                  <option value="White / Caucasian"></option>
+                  <option value="Black or African American"></option>
+                  <option value="Hispanic"></option>
+                  <option value="Middle Eastern"></option>
+                  <option value="American Indian or Alaskan Native"></option>
+                  <option value="Prefer not to answer"></option>
+                </datalist>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="country">Country of residence <span class="required">*</span></label>
+              <div class="control-stack">
+                <input id="country" type="text" v-model.trim="formData.country" list="countrySuggestions" autocomplete="country-name" required />
+                <datalist id="countrySuggestions">
+                  <option value="United States"></option><option value="Canada"></option><option value="India"></option>
+                  <option value="Tunisia"></option><option value="Bangladesh"></option><option value="China"></option>
+                </datalist>
+              </div>
+            </div>
+          </fieldset>
+          <p class="field-help">Demographic responses can be left blank or answered with “Prefer not to answer.”</p>
+        </section>
+
+        <!-- PAGE 4: Columns I–L (education) -->
+        <section v-show="currentStep === 3" class="page" aria-label="Education">
+          <h2 class="page-heading">Education</h2>
+          <fieldset class="installer-group">
+            <legend>Academic details</legend>
+            <div class="form-row">
+              <label for="school">School <span class="required">*</span></label>
+              <div class="control-stack">
+                <input id="school" type="text" v-model.trim="formData.school" list="schoolSuggestions" placeholder="School you attend" required />
+                <datalist id="schoolSuggestions">
+                  <option value="Oakland University"></option>
+                  <option value="The University of Michigan"></option>
+                  <option value="Michigan State University"></option>
+                  <option value="Wayne State University"></option>
+                  <option value="Arizona State University"></option>
+                  <option value="Kent State University"></option>
+                  <option value="Others"></option>
+                </datalist>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="major">Major <span class="required">*</span></label>
+              <div class="control-stack">
+                <input id="major" type="text" v-model.trim="formData.major" list="majorSuggestions" placeholder="Your field of study" required />
+                <datalist id="majorSuggestions">
+                  <option value="Computer Science"></option>
+                  <option value="Computer Engineering"></option>
+                  <option value="Computer And Information Systems"></option>
+                  <option value="Electrical Engineering"></option>
+                  <option value="Mechanical Engineering"></option>
+                  <option value="Mathematics And Computer Science"></option>
+                  <option value="Others"></option>
+                </datalist>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="studyLevel">Current level of study <span class="required">*</span></label>
+              <div class="control-stack">
+                <span class="select-wrap"><select id="studyLevel" v-model="formData.studyLevel" required>
+                  <option value="">Select your current level</option>
+                  <option>Less than Secondary / High School</option>
+                  <option>Secondary / High School</option>
+                  <option>Undergraduate University (2 year - community college or similar)</option>
+                  <option>Undergraduate University (3+ year)</option>
+                  <option>Graduate University (Masters, Professional, Doctoral, etc)</option>
+                  <option>Code School / Bootcamp</option>
+                  <option>I’m not currently a student</option>
+                  <option>Prefer not to answer</option>
+                  <option>Other</option>
+                </select></span>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="graduationYear">Expected graduation <span class="required">*</span></label>
+              <div class="control-stack">
+                <input id="graduationYear" type="text" v-model.trim="formData.graduationYear" placeholder="e.g. 2028 or May 2028" required />
+                <p class="field-help">You can enter a year, month and year, or “Graduated” if applicable.</p>
+              </div>
+            </div>
+          </fieldset>
+        </section>
+
+        <!-- PAGE 5: Columns M–N, T and V (event preferences) -->
+        <section v-show="currentStep === 4" class="page" aria-label="Event preferences">
+          <h2 class="page-heading">Event preferences</h2>
+          <fieldset class="installer-group">
+            <legend>At the event</legend>
+            <div class="form-row">
+              <label for="shirtSize">T-shirt size <span class="required">*</span></label>
+              <div class="control-stack">
+                <span class="select-wrap"><select id="shirtSize" v-model="formData.shirtSize" required>
+                  <option value="">Select a size</option>
+                  <option>XS</option><option>S</option><option>M</option><option>L</option>
+                  <option>XL</option><option>2XL</option><option>3XL</option>
+                </select></span>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="dietary">Dietary restrictions</label>
+              <div class="control-stack">
+                <input id="dietary" type="text" v-model.trim="formData.dietary" list="dietarySuggestions" placeholder="None, Halal, Vegetarian, allergies…" />
+                <datalist id="dietarySuggestions">
+                  <option value="None"></option><option value="Halal"></option><option value="Vegetarian"></option>
+                  <option value="Vegan"></option><option value="Kosher"></option><option value="Celiac Disease"></option>
+                </datalist>
+                <p class="field-help">Please include any allergies or additional details.</p>
+              </div>
+            </div>
+          </fieldset>
+          <fieldset class="installer-group">
+            <legend>Interests</legend>
+            <div class="form-row">
+              <label for="lookingFor">Currently looking for <span class="quiet-text">(optional)</span></label>
+              <div class="control-stack">
+                <span class="select-wrap"><select id="lookingFor" v-model="formData.lookingFor">
+                  <option value="">Select an option</option>
+                  <option>Internship</option>
+                  <option>Full-time role</option>
+                  <option>Part-time role</option>
+                  <option>Not interested</option>
+                </select></span>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="track">Most interested track <span class="required">*</span></label>
+              <div class="control-stack">
+                <span class="select-wrap"><select id="track" v-model="formData.track" required>
+                  <option value="">Select a track</option>
+                  <option>AI / ML</option>
+                  <option>Interactive Media</option>
+                  <option>Automotive</option>
+                  <option>Fintech</option>
+                </select></span>
+              </div>
+            </div>
+          </fieldset>
+        </section>
+
+        <!-- PAGE 6: Columns O–S (online profiles and resume) -->
+        <section v-show="currentStep === 5" class="page" aria-label="Profiles and resume">
+          <h2 class="page-heading">Profiles &amp; resume</h2>
+          <p class="page-text">Share any relevant links or a resume. Profile fields are optional.</p>
+          <fieldset class="installer-group">
+            <legend>Online profiles</legend>
+            <div class="form-row"><label for="github">GitHub</label>
+              <div class="control-stack"><input id="github" type="url" v-model.trim="formData.github" placeholder="https://github.com/username" /></div>
+            </div>
+            <div class="form-row"><label for="linkedin">LinkedIn</label>
+              <div class="control-stack"><input id="linkedin" type="url" v-model.trim="formData.linkedin" placeholder="https://www.linkedin.com/in/username" /></div>
+            </div>
+            <div class="form-row"><label for="devpost">Devpost</label>
+              <div class="control-stack"><input id="devpost" type="url" v-model.trim="formData.devpost" placeholder="https://devpost.com/username" /></div>
+            </div>
+            <div class="form-row"><label for="portfolio">Portfolio / website</label>
+              <div class="control-stack"><input id="portfolio" type="url" v-model.trim="formData.portfolio" placeholder="https://example.com" /></div>
+            </div>
+          </fieldset>
+          <fieldset class="installer-group">
+            <legend>Resume</legend>
+            <div class="form-row"><label for="resume">Upload resume</label>
+              <div class="control-stack">
+                <div class="file-picker-row">
+                  <input class="file-value" type="text" :value="formData.resumeFileName || 'No file selected'" readonly aria-label="Selected resume" />
+                  <button type="button" class="wizard-button" @click="$refs.resumeInput.click()">Browse...</button>
+                  <input id="resume" ref="resumeInput" class="hidden-file-input" type="file" accept=".pdf,.doc,.docx" @change="onResumeChange" />
+                </div>
+                <p v-if="formData.resumeFileName" class="field-help file-name">Selected: {{ formData.resumeFileName }}</p>
+                <p v-else class="field-help">PDF, DOC, or DOCX. File is not uploaded by this preview.</p>
+              </div>
+            </div>
+          </fieldset>
+        </section>
+
+        <!-- PAGE 7: Columns U, W–Y (motivation and agreements) -->
+        <section v-show="currentStep === 6" class="page" aria-label="Motivation and agreements">
+          <h2 class="page-heading">Motivation &amp; agreements</h2>
+          <fieldset class="installer-group">
+            <legend>Your application</legend>
+            <div class="form-row">
+              <label for="whyAttend">Why do you want to come to GrizzHacks? <span class="required">*</span></label>
+              <div class="control-stack"><textarea id="whyAttend" rows="5" v-model.trim="formData.whyAttend" required placeholder="Tell us what you'd like to learn, build, or experience."></textarea></div>
+            </div>
+          </fieldset>
+          <fieldset class="installer-group">
+            <legend>Agreements</legend>
+            <p class="group-lead">Please review each statement before continuing. <span class="required">*</span> indicates a required agreement.</p>
+            <div class="check-row">
+              <input id="agreeCode" type="checkbox" v-model="formData.agreeCode" required />
+              <label for="agreeCode">By applying to GrizzHacks, I agree to the <strong>MLH Code of Conduct</strong>. <span class="required">*</span></label>
+            </div>
+            <div class="check-row">
+              <input id="agreeShare" type="checkbox" v-model="formData.agreeShare" required />
+              <label for="agreeShare">I authorize you to share my application/registration information for event administration, ranking, MLH administration, pre- and post-event informational e-mails, and occasional messages about hackathons in-line with the MLH Privacy Policy. I further I agree to the terms of both the MLH Contest Terms and Conditions and the MLH Privacy Policy. <span class="required">*</span></label>
+            </div>
+            <div class="check-row">
+              <input id="agreeMarketing" type="checkbox" v-model="formData.agreeMarketing" />
+              <label for="agreeMarketing">I authorize MLH to send me occasional emails about relevant events, career opportunities, and community announcements. <strong>(Optional)</strong></label>
+            </div>
+          </fieldset>
+        </section>
+
+        <!-- PAGE 8: Review all 25 answers; no tracking columns or response records. -->
+        <section v-show="currentStep === 7" class="page" aria-label="Review">
+          <h2 class="page-heading">Review your application</h2>
+          <p class="page-text">Check your information before selecting <strong>Finish</strong>. Use <strong>Back</strong> to make changes.</p>
+          <fieldset v-for="group in reviewGroups" :key="group.title" class="review-group">
+            <legend>{{ group.title }}</legend>
+            <dl style="margin: 0;">
+              <div v-for="field in group.fields" :key="field.key" class="review-row">
+                <dt>{{ field.label }}</dt>
+                <dd>{{ reviewValue(field.key) }}</dd>
+              </div>
+            </dl>
+          </fieldset>
+          <div class="review-note">This is a local prototype. <strong>Finish</strong> advances to the completion page; it does not send data or upload your resume.</div>
+        </section>
+
+        <!-- PAGE 9: Front-end only completion state -->
+        <section v-show="currentStep === 8" class="page" aria-label="Complete">
+          <div class="finish-icon" aria-hidden="true">&#10003;</div>
+          <h2 class="page-heading">Application form completed</h2>
+          <p class="page-text">You've reached the end of the GrizzHacks registration wizard preview.</p>
+          <div class="review-note"><strong>No application was submitted.</strong> The form is ready for you to connect your own submission and file-upload logic.</div>
+          <p class="quiet-text" style="margin-top: 18px;">Select <strong>Start Over</strong> to clear the fields and return to the beginning.</p>
+        </section>
+      </div>
+
+      <footer class="wizard-footer">
+        <span class="footer-note">{{ currentStep === lastStep ? 'Preview complete' : 'All fields marked * are required.' }}</span>
+        <div class="button-group">
+          <button v-if="currentStep > 0 && currentStep < lastStep" class="wizard-button" type="button" @click="previous">&lt; Back</button>
+          <button v-if="currentStep < lastStep - 1" class="wizard-button primary" type="button" @click="next">Next &gt;</button>
+          <button v-if="currentStep === lastStep - 1" class="wizard-button primary" type="button" @click="finish">Finish</button>
+          <button v-if="currentStep === lastStep" class="wizard-button primary" type="button" @click="startOver">Start Over</button>
+        </div>
+      </footer>
+      </div><!-- /.wizard-surface -->
+    </main>
+  </div>
+
+
+  <script>
+    // All 25 non-administrative application fields from the main worksheet.
+    // Submitted At, Token, and Checked In are intentionally excluded.
+    function blankFormData() {
+      return {
+        firstName: '', lastName: '', phone: '', email: '',
+        age: '', gender: '', genderOther: '', ethnicity: '', country: '',
+        school: '', major: '', studyLevel: '', graduationYear: '',
+        shirtSize: '', dietary: '', lookingFor: '', track: '',
+        github: '', linkedin: '', devpost: '', portfolio: '', resumeFileName: '',
+        whyAttend: '', agreeCode: false, agreeShare: false, agreeMarketing: false
+      };
+    }
+
+    const app = new Vue({
+      el: '#vueApp',
+      data() {
+        return {
+          currentStep: 0,
+          steps: [
+            { title: 'Welcome to Setup', description: 'GrizzHacks application registration.' },
+            { title: 'Contact Information', description: 'Tell us how to contact you.' },
+            { title: 'Personal Background', description: 'Share a little about yourself.' },
+            { title: 'Education', description: 'Tell us about your academic background.' },
+            { title: 'Event Preferences', description: 'Select your interests and preferences.' },
+            { title: 'Profiles & Resume', description: 'Add your online profiles or resume.' },
+            { title: 'Agreements', description: 'Tell us why you want to attend and review the terms.' },
+            { title: 'Review Application', description: 'Make sure everything looks correct.' },
+            { title: 'All Done!', description: 'You have reached the end of the form preview.' }
+          ],
+          formData: blankFormData(),
+          resumeFile: null
+        };
+      },
+      computed: {
+        lastStep() { return this.steps.length - 1; },
+        progressPercent() { return Math.round((this.currentStep / this.lastStep) * 100); },
+        reviewGroups() {
+          return [
+            { title: 'Contact information', fields: [
+              { key: 'firstName', label: 'First name' }, { key: 'lastName', label: 'Last name' },
+              { key: 'phone', label: 'Phone number' }, { key: 'email', label: 'Email address' }
+            ] },
+            { title: 'Personal background', fields: [
+              { key: 'age', label: 'Age' }, { key: 'gender', label: 'Gender' },
+              { key: 'ethnicity', label: 'Race / ethnicity' }, { key: 'country', label: 'Country' }
+            ] },
+            { title: 'Education', fields: [
+              { key: 'school', label: 'School' }, { key: 'major', label: 'Major' },
+              { key: 'studyLevel', label: 'Study level' }, { key: 'graduationYear', label: 'Expected graduation' }
+            ] },
+            { title: 'Event preferences', fields: [
+              { key: 'shirtSize', label: 'T-shirt size' }, { key: 'dietary', label: 'Dietary restrictions' },
+              { key: 'lookingFor', label: 'Looking for' }, { key: 'track', label: 'Preferred track' }
+            ] },
+            { title: 'Profiles & resume', fields: [
+              { key: 'github', label: 'GitHub' }, { key: 'linkedin', label: 'LinkedIn' },
+              { key: 'devpost', label: 'Devpost' }, { key: 'portfolio', label: 'Portfolio' },
+              { key: 'resumeFileName', label: 'Resume' }
+            ] },
+            { title: 'Application & agreements', fields: [
+              { key: 'whyAttend', label: 'Why attend?' },
+              { key: 'agreeCode', label: 'Code of Conduct' },
+              { key: 'agreeShare', label: 'Application data sharing' },
+              { key: 'agreeMarketing', label: 'Optional MLH emails' }
+            ] }
+          ];
+        }
+      },
+      methods: {
+        reviewValue(key) {
+          if (key === 'gender' && this.formData.gender === 'Self-describe') {
+            return this.formData.genderOther || 'Self-describe';
+          }
+          if (key === 'agreeCode' || key === 'agreeShare') return this.formData[key] ? 'Agreed' : 'Not agreed';
+          if (key === 'agreeMarketing') return this.formData[key] ? 'Yes' : 'No';
+          const value = this.formData[key];
+          return value === '' || value === null || value === undefined ? 'Not provided' : String(value);
+        },
+        onResumeChange(event) {
+          this.resumeFile = event.target.files && event.target.files[0] || null;
+          this.formData.resumeFileName = this.resumeFile ? this.resumeFile.name : '';
+        },
+        scrollBodyToTop() {
+          this.$nextTick(() => {
+            const body = this.$el.querySelector('.wizard-body');
+            if (body) body.scrollTop = 0;
+          });
+        },
+        validateCurrentPage() {
+          const page = this.$el.querySelectorAll('.wizard-body > .page')[this.currentStep];
+          if (!page) return true;
+          const controls = page.querySelectorAll('input, select, textarea');
+          for (const field of controls) {
+            if (!field.checkValidity()) {
+              field.reportValidity();
+              field.focus();
+              return false;
+            }
+          }
+          return true;
+        },
+        next() {
+          if (this.currentStep < this.lastStep - 1 && this.validateCurrentPage()) {
+            this.currentStep += 1;
+            this.scrollBodyToTop();
+          }
+        },
+        previous() {
+          if (this.currentStep > 0) {
+            this.currentStep -= 1;
+            this.scrollBodyToTop();
+          }
+        },
+        finish() {
+          // Front-end demo only. Implement your application's submit endpoint here.
+          // The selected resume is available as this.resumeFile for FormData upload.
+          if (!this.validateCurrentPage()) return;
+          this.currentStep = this.lastStep;
+          this.scrollBodyToTop();
+        },
+        startOver() {
+          this.currentStep = 0;
+          this.formData = blankFormData();
+          this.resumeFile = null;
+          const resume = this.$el.querySelector('#resume');
+          if (resume) resume.value = '';
+          this.scrollBodyToTop();
+        }
+      }
+    });
+  </script>
+</body>
+</html>
