@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/shared/vendor/xpcss/XP.css">
+    <link rel="stylesheet" href="/apps/faq/css/app.css">
+    <title>F.A.Q.</title>
+  </head>
+  <body>
+    <div id="forum">
+      <header class="forum-header">
+        <h1>GrizzHacks Community Forums</h1>
+        <div class="header-links">
+          <a href="#" id="register-link">Register</a>
+        </div>
+        <p class="tagline">Frequently Asked Questions &middot; Est. 11 BG (Before GTAVI)</p>
+      </header>
+
+      <!-- shows up when u click Register in the header -->
+      <div id="register-msg" class="register-msg" hidden>
+        <b>Registration for this forum is closed.</b>
+        Did you mean to register for GrizzHacks? Close this window and open the
+        <b>Register for GrizzHacks</b> app on the desktop.
+      </div>
+
+      <!-- breadcrumbs + page content get filled in by app.js -->
+      <nav id="breadcrumbs" class="breadcrumbs"></nav>
+      <main id="content"></main>
+
+      <footer class="forum-footer">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        <!-- app.js puts the visitor number in here -->
+        <p id="hit-counter" class="hit-counter"></p>
+      </footer>
+    </div>
+
+    <!-- data has to load first since app.js uses it -->
+    <script src="/apps/faq/scripts/data.js"></script>
+    <script src="/apps/faq/scripts/app.js"></script>
+  </body>
+</html>

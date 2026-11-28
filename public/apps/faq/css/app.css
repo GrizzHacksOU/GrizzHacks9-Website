@@ -1,0 +1,497 @@
+/* F.A.Q. forum styles
+   colors are placeholders until design picks the real palette,
+   so everything uses these variables to make swapping easy */
+:root {
+  --bg: #e6e6e0;
+  --panel: #ffffff;
+  --row: #fafaf7;
+  --row-alt: #efefe9;
+  --head-bg: #4b4b4b;
+  --head-text: #ffffff;
+  --border: #b5b5ab;
+  --text: #222222;
+  --muted: #6b6b6b;
+  --link: #7a4b00;
+  --admin: #b00000;
+  --sticky: #fff6d6;
+  --quick: #eef6e8;
+  --quick-border: #8bb174;
+}
+
+body {
+  margin: 0;
+  padding: 10px;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Verdana, Tahoma, Arial, sans-serif;
+  font-size: 12px;
+}
+
+a {
+  color: var(--link);
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 11px;
+}
+
+/* ---------- header / breadcrumbs / footer ---------- */
+
+.forum-header {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  margin-bottom: 8px;
+}
+
+.forum-header {
+  position: relative;
+}
+
+.header-links {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.forum-header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.tagline {
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.breadcrumbs {
+  margin-bottom: 8px;
+  font-size: 11px;
+}
+
+.forum-footer {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.page-title {
+  margin: 4px 0 2px;
+  font-size: 16px;
+}
+
+/* ---------- tables (index + thread list) ---------- */
+
+.forum-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+
+.forum-table th {
+  background: var(--head-bg);
+  color: var(--head-text);
+  text-align: left;
+  padding: 5px 8px;
+  font-size: 11px;
+}
+
+.forum-table td {
+  padding: 6px 8px;
+  border-top: 1px solid var(--border);
+  background: var(--row);
+  vertical-align: middle;
+}
+
+.forum-table tr.alt td {
+  background: var(--row-alt);
+}
+
+.forum-table tr.sticky-row td {
+  background: var(--sticky);
+}
+
+.col-icon {
+  width: 24px;
+  text-align: center;
+}
+
+.col-num {
+  width: 60px;
+  text-align: center;
+}
+
+.col-author {
+  width: 120px;
+}
+
+.col-last {
+  width: 170px;
+}
+
+.cat-link,
+.topic-link {
+  font-weight: bold;
+}
+
+/* placeholder icons, design will replace these with images */
+.folder-icon,
+.topic-icon {
+  width: 16px;
+  height: 14px;
+  margin: 0 auto;
+  background: #c9a227;
+  border: 1px solid #8a6d10;
+}
+
+.topic-icon {
+  background: #9a9a9a;
+  border-color: #666;
+}
+
+.topic-icon.locked {
+  background: #666;
+}
+
+.tag {
+  font-size: 10px;
+  font-weight: bold;
+  padding: 0 3px;
+  border: 1px solid;
+}
+
+.tag-sticky {
+  color: #8a6d10;
+  border-color: #c9a227;
+}
+
+.tag-locked {
+  color: var(--muted);
+  border-color: var(--border);
+}
+
+.admin-name {
+  color: var(--admin);
+  font-weight: bold;
+}
+
+/* ---------- who's online box ---------- */
+
+.stats-box {
+  margin-top: 10px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.stats-title {
+  background: var(--head-bg);
+  color: var(--head-text);
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.stats-body {
+  padding: 6px 8px;
+  line-height: 1.6;
+}
+
+/* ---------- thread page ---------- */
+
+.quick-answer {
+  background: var(--quick);
+  border: 1px solid var(--quick-border);
+  padding: 8px 10px;
+  margin: 8px 0;
+}
+
+.quick-label {
+  font-weight: bold;
+}
+
+.post {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.post-author {
+  width: 140px;
+  padding: 8px;
+  vertical-align: top;
+  background: var(--row-alt);
+  border-right: 1px solid var(--border);
+}
+
+.username {
+  font-weight: bold;
+}
+
+.rank {
+  font-size: 10px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.badge-admin {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+  background: var(--admin);
+  padding: 1px 5px;
+  margin: 2px 0 6px;
+}
+
+/* placeholder avatar box */
+.avatar {
+  width: 64px;
+  height: 64px;
+  line-height: 64px;
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  color: #ffffff;
+  background: #9a9a9a;
+  border: 1px solid #666;
+  margin-bottom: 6px;
+}
+
+.post.answer .avatar {
+  background: var(--admin);
+}
+
+.user-stats {
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.post-body {
+  padding: 8px 10px;
+  vertical-align: top;
+}
+
+.post-subject {
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+.post-text {
+  line-height: 1.5;
+  min-height: 60px;
+}
+
+.edited {
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.signature {
+  margin-top: 10px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+  color: var(--muted);
+}
+
+.locked-bar {
+  background: var(--row-alt);
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  text-align: center;
+  font-size: 11px;
+}
+
+/* ---------- votes ---------- */
+
+.post-votes {
+  width: 36px;
+  padding: 8px 4px;
+  vertical-align: top;
+  text-align: center;
+  background: var(--row-alt);
+  border-right: 1px solid var(--border);
+}
+
+/* XP.css makes every button big, so undo that for the little arrows */
+.vote-btn {
+  min-width: 0;
+  min-height: 0;
+  width: 24px;
+  height: 18px;
+  padding: 0;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.vote-btn.active {
+  color: var(--admin);
+  font-weight: bold;
+}
+
+.vote-count {
+  font-weight: bold;
+  font-size: 13px;
+  margin: 3px 0;
+}
+
+/* ---------- official answer / quotes / replies header ---------- */
+
+.official {
+  display: inline-block;
+  color: #2e7d32;
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+.quote {
+  background: var(--row-alt);
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.quote-head {
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.replies-head {
+  background: var(--head-bg);
+  color: var(--head-text);
+  padding: 4px 8px;
+  margin: 12px 0 8px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* ---------- banned users ---------- */
+
+.badge-banned {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+  background: #333333;
+  padding: 1px 5px;
+  margin: 2px 0 6px;
+}
+
+.avatar.banned {
+  background: #cccccc;
+  color: #888888;
+  border-color: #999999;
+}
+
+.banned-note {
+  margin-top: 10px;
+  padding: 4px 6px;
+  border: 1px solid var(--admin);
+  color: var(--admin);
+  font-size: 11px;
+  font-weight: bold;
+  font-style: italic;
+}
+
+/* ---------- report post ---------- */
+
+.report-box {
+  margin-top: 8px;
+  text-align: right;
+  font-size: 10px;
+}
+
+.report-link {
+  color: var(--muted);
+}
+
+.reported {
+  color: var(--admin);
+  font-style: italic;
+}
+
+/* ---------- moderator note (necro post etc) ---------- */
+
+.mod-note {
+  margin-top: 10px;
+  padding: 4px 6px;
+  background: var(--sticky);
+  border: 1px dashed #c9a227;
+  font-size: 11px;
+}
+
+/* ---------- hit counter ---------- */
+
+.hit-counter {
+  margin-top: 6px;
+  font-size: 10px;
+}
+
+.hit-counter .digit {
+  display: inline-block;
+  width: 10px;
+  margin-right: 1px;
+  background: #111111;
+  color: #33ff33;
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* ---------- registration closed message ---------- */
+
+.register-msg {
+  background: var(--sticky);
+  border: 1px solid #c9a227;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  font-size: 11px;
+}
+
+/* ---------- duplicate threads ---------- */
+
+.forum-table tr.dupe-row td {
+  color: var(--muted);
+}
+
+.forum-table tr.dupe-row .topic-link {
+  font-weight: normal;
+}
+
+.tag-dupe {
+  color: var(--muted);
+  border-color: var(--border);
+  font-style: italic;
+}
+
+.dupe-line {
+  margin-top: 2px;
+}
+
+.dupe-banner {
+  background: var(--sticky);
+  border: 1px solid #c9a227;
+  padding: 8px 10px;
+  margin: 8px 0;
+  font-weight: bold;
+}
