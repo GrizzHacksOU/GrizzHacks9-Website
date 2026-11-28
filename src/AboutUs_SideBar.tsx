@@ -7,19 +7,19 @@ const rainbow = ['#4a5bff', '#1fa3ff', '#19d3c5', '#4cd137', '#ffd400', '#ff8a00
 
 const pages: Page[] = [
   {
-    id: 'welcome',
-    title: 'Welcome',
-    body: ['Placeholder text for the Welcome page.', 'Add your own information here later.'],
+    id: 'pageOne',
+    title: '1',
+    body: ['Placeholder text']
   },
   {
-    id: 'about',
-    title: 'About Us',
-    body: ['Placeholder text for the About Us page.', 'Add your own information here later.'],
+    id: 'pageTwo',
+    title: '2',
+    body: ['Placeholder text']
   },
   {
-    id: 'contact',
-    title: 'Contact',
-    body: ['Placeholder text for the Contact page.', 'Add your own information here later.'],
+    id: 'pageThree',
+    title: '3',
+    body: ['Placeholder text']
   },
 ]
 
@@ -59,7 +59,7 @@ export default function SideBar() {
 
   return (
     <>
-      <button className="hm-burger" onClick={() => setOpen(!open)} aria-label="Toggle menu">
+      <button className="hm-button" onClick={() => setOpen(!open)} aria-label="Toggle menu">
         <span /><span /><span />
       </button>
 
