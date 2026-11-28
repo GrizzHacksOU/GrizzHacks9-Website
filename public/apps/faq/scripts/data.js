@@ -75,6 +75,8 @@ const CATEGORIES = [
 // replies get sorted by votes (highest first), the admin answer always stays on top
 // quote: put the id of the post being quoted ('question', 'answer' or a reply id like 'r1')
 // banned: true instead of author hides the username and shows the "Banned User" badge
+// reports: how many times a reply was already reported (optional, default 0)
+// modNote: little note from the admin under a reply (optional)
 const THREADS = [
   // ---------- General ----------
   {
@@ -99,7 +101,10 @@ const THREADS = [
       { id: 'r1', author: 'lan_party_dave', date: '2003-09-14 21:40', votes: 15, text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod?' },
       { id: 'r2', author: 'xX_c0d3r_Xx', date: '2003-09-14 22:15', votes: 9, text: 'Ut enim ad minim veniam lol', quote: 'r1' },
       { id: 'r3', author: 'sk8rgrl2003', date: '2003-09-15 11:02', votes: 4, text: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.' },
-      { id: 'r4', author: 'n00b_hax0r', date: '2003-09-15 12:48', votes: 2, text: 'oh. lorem ipsum thx!!', quote: 'answer' }
+      { id: 'r4', author: 'n00b_hax0r', date: '2003-09-15 12:48', votes: 2, text: 'oh. lorem ipsum thx!!', quote: 'answer' },
+      // necro post lol. modNote shows up under the post as a note from the admin
+      { id: 'r5', author: 'lan_party_dave', date: '2026-11-21 03:14', votes: 27, text: 'bump. anyone still here?? GTA VI finally came out btw',
+        modNote: 'Please don\'t bump 23 year old threads. -GrizzAdmin' }
     ]
   },
   {
@@ -126,7 +131,7 @@ const THREADS = [
     edited: false,
     replies: [
       // banned: true -> no username shown, gets the "Banned User" badge instead
-      { id: 'r1', banned: true, date: '2003-10-02 16:51', votes: -14, text: 'lol you\'ve never coded and you want to go to a HACKathon?? ' +
+      { id: 'r1', banned: true, reports: 37, date: '2003-10-02 16:51', votes: -14, text: 'lol you\'ve never coded and you want to go to a HACKathon?? ' +
         'go watch a hello world tutorial first. you\'re gonna be dead weight for whatever team gets stuck with you' },
       { id: 'r2', author: 'Neo_1999', date: '2003-10-02 17:30', votes: 11, text: 'Excepteur sint occaecat cupidatat non proident.', quote: 'r1' }
     ]

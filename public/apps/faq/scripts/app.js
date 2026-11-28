@@ -7,33 +7,36 @@
 const content = document.getElementById('content');
 const breadcrumbs = document.getElementById('breadcrumbs');
 
-// votes the user clicked. key looks like "threadId:postId" and value is 1 (up), -1 (down) or 0
-// we save them in localStorage so they stay after u refresh (no database so this is the best we got)
-const STORAGE_KEY = 'faq-votes';
+// no database so we save stuff in localStorage so it stays after u refresh
+// (votes, reported posts, visitor number)
 
-function loadVotes() {
+function loadData(name, fallback) {
   // try/catch bc some browsers block localStorage (private mode, iframes etc)
   try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) {
+    const saved = localStorage.getItem(name);
+    if (saved !== null) {
       return JSON.parse(saved);
     }
   } catch (err) {
-    console.log('couldnt load votes', err);
+    console.log('couldnt load ' + name, err);
   }
-  return {};
+  return fallback;
 }
 
-function saveVotes() {
+function saveData(name, data) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(myVotes));
+    localStorage.setItem(name, JSON.stringify(data));
   } catch (err) {
-    // if it doesnt save its fine, voting still works until refresh
-    console.log('couldnt save votes', err);
+    // if it doesnt save its fine, stuff still works until refresh
+    console.log('couldnt save ' + name, err);
   }
 }
 
-let myVotes = loadVotes();
+// votes the user clicked. key looks like "threadId:postId" and value is 1 (up), -1 (down) or 0
+let myVotes = loadData('faq-votes', {});
+
+// posts the user reported. key is the same "threadId:postId" thing, value is true
+let myReports = loadData('faq-reports', {});
 
 // used for replies from banned users (the real username is hidden)
 const BANNED_USER = { name: 'Banned User', role: 'banned', rank: '', joined: '', posts: 0, location: '', sig: '' };
@@ -204,7 +207,7 @@ function statsBox() {
     '<div class="stats-title">Who is Online</div>' +
     '<div class="stats-body small">' +
     'Our users have posted a total of <b>' + totalPosts + '</b> posts in <b>' + THREADS.length + '</b> topics.<br>' +
-    'We have <b>' + names.length + '</b> registered users.<br>' +
+    'We have <b>' + formatNum(registeredUsers()) + '</b> registered users.<br>' +
     'Users online: ' + online +
     '</div></div>';
 }
@@ -281,7 +284,26 @@ function voteBox(key, baseVotes) {
     '</div>';
 }
 
-// post = { user, subject, body, date, votes, voteKey, isAnswer, edited, quote }
+// the text in the report box. changes after u click it
+function reportText(key, reports) {
+  const reported = myReports[key] === true;
+  let total = reports;
+  if (reported) total = total + 1;
+
+  let html = '';
+  if (reported) {
+    html = '<span class="reported">Reported. Thanks, a moderator will review this post.</span>';
+  } else {
+    html = '<a href="#" class="report-link">Report post</a>';
+  }
+
+  if (total > 0) {
+    html += ' <span class="muted">(reported ' + total + (total === 1 ? ' time' : ' times') + ')</span>';
+  }
+  return html;
+}
+
+// post = { user, subject, body, date, votes, voteKey, isAnswer, edited, quote, reports, modNote }
 function renderPost(post) {
   const user = post.user;
 
@@ -332,6 +354,19 @@ function renderPost(post) {
       '</div>';
   }
 
+  let modNote = '';
+  if (post.modNote) {
+    modNote = '<div class="mod-note"><b>Moderator note:</b> ' + post.modNote + '</div>';
+  }
+
+  // no report button on admin posts (who would they report it to lol)
+  let reportHtml = '';
+  if (user.role !== 'admin') {
+    reportHtml = '<div class="report-box" data-key="' + post.voteKey + '" data-reports="' + (post.reports || 0) + '">' +
+      reportText(post.voteKey, post.reports || 0) +
+      '</div>';
+  }
+
   let bannedNote = '';
   if (isBanned) {
     bannedNote = '<div class="banned-note">This user has been banned for violating the community guidelines.</div>';
@@ -349,8 +384,10 @@ function renderPost(post) {
     quoteHtml +
     '<div class="post-text">' + post.body + '</div>' +
     bannedNote +
+    modNote +
     editedLine +
     (user.sig ? '<div class="signature small">' + user.sig + '</div>' : '') +
+    reportHtml +
     '</td>' +
     '</tr>' +
     '</table>';
@@ -420,7 +457,9 @@ function showThread(threadId) {
       date: r.date,
       votes: r.votes,
       voteKey: t.id + ':' + r.id,
-      quote: r.quote ? getQuoted(t, r.quote) : null
+      quote: r.quote ? getQuoted(t, r.quote) : null,
+      reports: r.reports,
+      modNote: r.modNote
     });
   });
 
@@ -437,6 +476,18 @@ function showThread(threadId) {
 // one click listener for the whole page instead of one per button
 
 content.addEventListener('click', function (e) {
+  // report link
+  const reportLink = e.target.closest('.report-link');
+  if (reportLink) {
+    e.preventDefault(); // its an <a href="#"> so stop it from messing up the url
+    const reportBox = reportLink.closest('.report-box');
+    const reportKey = reportBox.dataset.key;
+    myReports[reportKey] = true;
+    saveData('faq-reports', myReports);
+    reportBox.innerHTML = reportText(reportKey, Number(reportBox.dataset.reports));
+    return;
+  }
+
   const btn = e.target.closest('.vote-btn');
   if (!btn) return;
 
@@ -451,13 +502,67 @@ content.addEventListener('click', function (e) {
   } else {
     myVotes[key] = clicked;
   }
-  saveVotes();
+  saveData('faq-votes', myVotes);
 
   // just update this one box, don't re-sort (posts jumping around is annoying)
   box.querySelector('.vote-count').textContent = base + myVotes[key];
   box.querySelector('.vote-up').classList.toggle('active', myVotes[key] === 1);
   box.querySelector('.vote-down').classList.toggle('active', myVotes[key] === -1);
 });
+
+// ---------- register link ----------
+// theres no forum registration, it just shows a message pointing to the real register app
+
+document.getElementById('register-link').addEventListener('click', function (e) {
+  e.preventDefault();
+  const msg = document.getElementById('register-msg');
+  msg.hidden = !msg.hidden; // click again to hide it
+});
+
+// ---------- hit counter ----------
+// fake visitor counter in the footer. no server so we kinda make it up:
+// first visit = number based on how long the site has been up (about 1 visitor every 3 min)
+// after that = saved number + 1 each visit. never goes lower than the time number,
+// so if u open it on another device later u still get a bigger number
+
+const COUNTER_START = new Date(2026, 10, 1); // nov 1 2026, months start at 0 in js
+const COUNTER_BASE = 1000;
+
+// the time based number (same for everyone at the same time, doesnt go up when u refresh)
+// gets set by updateHitCounter, the stats box uses it for the user count
+let timeVisitorCount = 0;
+
+// pretend about 1 out of every 5 visitors made an account
+// (never less than the users we actually have in data.js)
+function registeredUsers() {
+  return Math.max(Math.floor(timeVisitorCount / 5), Object.keys(USERS).length);
+}
+
+function updateHitCounter() {
+  const minutes = Math.floor((Date.now() - COUNTER_START.getTime()) / 60000);
+  const timeCount = COUNTER_BASE + Math.floor(minutes / 3);
+  timeVisitorCount = timeCount;
+
+  const saved = loadData('faq-visitor', null);
+  let count = 0;
+  if (saved === null) {
+    // first visit. add a random 0-9 so 2 people in the same minute dont get the same number
+    count = timeCount + Math.floor(Math.random() * 10);
+  } else {
+    count = Math.max(saved + 1, timeCount);
+  }
+  saveData('faq-visitor', count);
+
+  // 7 digits with zeros in front, each digit gets its own box like an old odometer
+  const digits = String(count).padStart(7, '0').split('');
+  let html = 'You are visitor # ';
+  digits.forEach(function (d) {
+    html += '<span class="digit">' + d + '</span>';
+  });
+  document.getElementById('hit-counter').innerHTML = html;
+}
+
+updateHitCounter();
 
 // ---------- router ----------
 

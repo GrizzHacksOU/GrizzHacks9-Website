@@ -52,6 +52,18 @@ a:hover {
   margin-bottom: 8px;
 }
 
+.forum-header {
+  position: relative;
+}
+
+.header-links {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
 .forum-header h1 {
   margin: 0;
   font-size: 20px;
@@ -399,4 +411,59 @@ a:hover {
   font-size: 11px;
   font-weight: bold;
   font-style: italic;
+}
+
+/* ---------- report post ---------- */
+
+.report-box {
+  margin-top: 8px;
+  text-align: right;
+  font-size: 10px;
+}
+
+.report-link {
+  color: var(--muted);
+}
+
+.reported {
+  color: var(--admin);
+  font-style: italic;
+}
+
+/* ---------- moderator note (necro post etc) ---------- */
+
+.mod-note {
+  margin-top: 10px;
+  padding: 4px 6px;
+  background: var(--sticky);
+  border: 1px dashed #c9a227;
+  font-size: 11px;
+}
+
+/* ---------- hit counter ---------- */
+
+.hit-counter {
+  margin-top: 6px;
+  font-size: 10px;
+}
+
+.hit-counter .digit {
+  display: inline-block;
+  width: 10px;
+  margin-right: 1px;
+  background: #111111;
+  color: #33ff33;
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* ---------- registration closed message ---------- */
+
+.register-msg {
+  background: var(--sticky);
+  border: 1px solid #c9a227;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  font-size: 11px;
 }
