@@ -1,6 +1,6 @@
 // All the content for the FAQ forum lives here.
 // To add a question just add another object to THREADS.
-// NOTE: titles, questions and answers are lorem ipsum for now, swap them with the real info later!
+// NOTE: questions and answers are lorem ipsum for now (titles are real), swap them with the real info later!
 //
 // IMPORTANT!! dont change thread ids or reply ids (r1, r2...) once the site is live.
 // votes get saved in the browser using those ids, so if u rename them peoples votes
@@ -27,9 +27,9 @@ const USERS = {
   sk8rgrl2003: {
     name: 'sk8rgrl2003',
     role: 'member',
-    rank: 'Member',
+    rank: 'Newbie',
     joined: 'Jun 2003',
-    posts: 212,
+    posts: 14,
     location: 'Detroit',
     sig: 'AIM: sk8rgrl2003 ~ leave a msg!! ~'
   },
@@ -84,7 +84,7 @@ const THREADS = [
     category: 'general',
     sticky: true,
     locked: true,
-    title: 'Lorem ipsum dolor sit amet?',
+    title: 'What is GrizzHacks?',
     author: 'n00b_hax0r',
     views: 4821,
     date: '2003-09-14 21:07',
@@ -141,7 +141,7 @@ const THREADS = [
     category: 'general',
     sticky: false,
     locked: true,
-    title: 'Eiusmod tempor incididunt?',
+    title: 'How much does it cost to attend?',
     author: 'lan_party_dave',
     views: 976,
     date: '2003-11-20 01:13',
@@ -155,13 +155,50 @@ const THREADS = [
     replies: []
   },
 
+  // duplicates (people who didnt read before posting lol)
+  // duplicateOf = id of the real thread. the admin reply gets made automatically so no answer needed
+  {
+    id: 'cant-code',
+    category: 'general',
+    duplicateOf: 'do-i-need-to-code',
+    sticky: false,
+    locked: true,
+    title: 'can i come if i cant code??',
+    author: 'n00b_hax0r',
+    views: 64,
+    date: '2004-02-11 23:52',
+    votes: -2,
+    question: 'i dont know any code at all. can i still come?? sry if this was asked already',
+    answerDate: '2004-02-12 08:15',
+    answerVotes: 9,
+    edited: false,
+    replies: []
+  },
+  {
+    id: 'wat-is-this',
+    category: 'general',
+    duplicateOf: 'what-is-grizzhacks',
+    sticky: false,
+    locked: true,
+    title: 'wat is this',
+    author: 'Neo_1999',
+    views: 41,
+    date: '2004-03-03 14:07',
+    votes: 0,
+    question: 'saw a poster in the hallway. wat is this, some kind of matrix thing?',
+    answerDate: '2004-03-03 15:30',
+    answerVotes: 6,
+    edited: false,
+    replies: []
+  },
+
   // ---------- Registration ----------
   {
     id: 'how-do-i-register',
     category: 'registration',
     sticky: true,
     locked: true,
-    title: 'Ut labore et dolore magna aliqua?',
+    title: 'How do I register?',
     author: 'Neo_1999',
     views: 3507,
     date: '2004-01-08 19:55',
@@ -184,7 +221,7 @@ const THREADS = [
     category: 'registration',
     sticky: false,
     locked: true,
-    title: 'Quis nostrud exercitation ullamco?',
+    title: 'Who can attend?',
     author: 'n00b_hax0r',
     views: 1544,
     date: '2004-01-12 23:41',
@@ -209,7 +246,7 @@ const THREADS = [
     category: 'registration',
     sticky: false,
     locked: true,
-    title: 'Laboris nisi ut aliquip ex ea commodo consequat?',
+    title: 'Do I need a team before signing up?',
     author: 'sk8rgrl2003',
     views: 1102,
     date: '2004-02-03 15:30',
@@ -232,7 +269,7 @@ const THREADS = [
     category: 'travel',
     sticky: true,
     locked: true,
-    title: 'Duis aute irure dolor?',
+    title: 'Where is GrizzHacks held?',
     author: 'lan_party_dave',
     views: 2033,
     date: '2004-02-19 10:08',
@@ -254,7 +291,7 @@ const THREADS = [
     category: 'travel',
     sticky: false,
     locked: true,
-    title: 'Velit esse cillum dolore?',
+    title: 'Is there parking on campus?',
     author: 'xX_c0d3r_Xx',
     views: 845,
     date: '2004-02-25 08:44',
@@ -276,7 +313,7 @@ const THREADS = [
     category: 'travel',
     sticky: false,
     locked: true,
-    title: 'Fugiat nulla pariatur?',
+    title: 'Do you reimburse travel costs?',
     author: 'Neo_1999',
     views: 610,
     date: '2004-03-01 20:19',
@@ -290,6 +327,23 @@ const THREADS = [
     edited: false,
     replies: []
   },
+  {
+    id: 'where-do-i-park',
+    category: 'travel',
+    duplicateOf: 'parking',
+    sticky: false,
+    locked: true,
+    title: 'where do i park my car??',
+    author: 'n00b_hax0r',
+    views: 88,
+    date: '2004-03-08 07:58',
+    votes: -1,
+    question: 'title says it all. pls help',
+    answerDate: '2004-03-08 09:20',
+    answerVotes: 5,
+    edited: false,
+    replies: []
+  },
 
   // ---------- During the Event ----------
   {
@@ -297,7 +351,7 @@ const THREADS = [
     category: 'during',
     sticky: true,
     locked: true,
-    title: 'Excepteur sint occaecat cupidatat?',
+    title: 'What should I bring?',
     author: 'sk8rgrl2003',
     views: 2710,
     date: '2004-03-05 17:36',
@@ -326,7 +380,7 @@ const THREADS = [
     category: 'during',
     sticky: false,
     locked: true,
-    title: 'Sunt in culpa?',
+    title: 'Will food be provided?',
     author: 'lan_party_dave',
     views: 1888,
     date: '2004-03-10 12:00',
@@ -347,7 +401,7 @@ const THREADS = [
     category: 'during',
     sticky: false,
     locked: true,
-    title: 'Qui officia deserunt mollit anim?',
+    title: 'Can I sleep at the venue?',
     author: 'n00b_hax0r',
     views: 734,
     date: '2004-03-14 03:22',
@@ -375,7 +429,7 @@ const THREADS = [
     category: 'prizes',
     sticky: true,
     locked: true,
-    title: 'Mollit anim id est laborum?',
+    title: 'How does judging work?',
     author: 'xX_c0d3r_Xx',
     views: 1650,
     date: '2004-03-20 14:10',
@@ -399,7 +453,7 @@ const THREADS = [
     category: 'prizes',
     sticky: false,
     locked: true,
-    title: 'Nemo enim ipsam voluptatem?',
+    title: 'What are the prizes?',
     author: 'Neo_1999',
     views: 2299,
     date: '2004-03-22 22:58',
@@ -420,7 +474,7 @@ const THREADS = [
     category: 'prizes',
     sticky: false,
     locked: true,
-    title: 'Neque porro quisquam est qui dolorem ipsum?',
+    title: 'Can I work on a project I started before the event?',
     author: 'lan_party_dave',
     views: 512,
     date: '2004-03-27 18:40',

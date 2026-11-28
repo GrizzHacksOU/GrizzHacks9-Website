@@ -56,12 +56,27 @@ function getUser(name) {
   return USERS[name] || { name: name, role: 'member', rank: 'Guest', joined: '???', posts: 0, location: '', sig: '' };
 }
 
-// threads in a category, stickies first
+// threads in a category, stickies first and duplicates at the bottom
 function getThreadsIn(catId) {
   const threads = THREADS.filter(function (t) { return t.category === catId; });
   const sticky = threads.filter(function (t) { return t.sticky; });
-  const normal = threads.filter(function (t) { return !t.sticky; });
-  return sticky.concat(normal);
+  const normal = threads.filter(function (t) { return !t.sticky && !t.duplicateOf; });
+  const dupes = threads.filter(function (t) { return t.duplicateOf; });
+  return sticky.concat(normal, dupes);
+}
+
+// link to the original thread (for duplicates)
+function originalLink(thread) {
+  const original = getThread(thread.duplicateOf);
+  if (!original) return '???'; // someone typo'd the id in data.js
+  return '<a href="#/t/' + original.id + '">' + original.title + '</a>';
+}
+
+// the admin reply on duplicate threads, made from the original thread so we dont have to write it every time
+function duplicateAnswer(thread) {
+  return 'Duplicate. This has already been answered here:<br>' +
+    '&rarr; ' + originalLink(thread) + '<br><br>' +
+    'Please use the search... oh wait. Please check the existing threads before posting! Thread locked.';
 }
 
 // banned replies don't have an author, so this gives back the fake banned user instead
@@ -226,17 +241,24 @@ function showCategory(catId) {
   let rows = '';
   threads.forEach(function (t, i) {
     let tags = '';
+    let dupeLine = '';
     if (t.sticky) tags += '<span class="tag tag-sticky">Sticky</span> ';
-    if (t.locked) tags += '<span class="tag tag-locked">Locked</span> ';
+    if (t.duplicateOf) {
+      tags += '<span class="tag tag-dupe">Duplicate</span> ';
+      dupeLine = '<div class="dupe-line small">&rarr; ' + originalLink(t) + '</div>';
+    } else if (t.locked) {
+      tags += '<span class="tag tag-locked">Locked</span> ';
+    }
 
     let rowClass = i % 2 === 1 ? 'alt' : '';
     if (t.sticky) rowClass += ' sticky-row';
+    if (t.duplicateOf) rowClass += ' dupe-row';
 
     const last = getLastPost(t);
 
     rows += '<tr class="' + rowClass + '">' +
       '<td class="col-icon"><div class="topic-icon' + (t.locked ? ' locked' : '') + '"></div></td>' +
-      '<td>' + tags + '<a class="topic-link" href="#/t/' + t.id + '">' + t.title + '</a></td>' +
+      '<td>' + tags + '<a class="topic-link" href="#/t/' + t.id + '">' + t.title + '</a>' + dupeLine + '</td>' +
       '<td class="col-author">' + t.author + '</td>' +
       // replies = everything except the question
       '<td class="col-num">' + (countPosts(t) - 1) + '</td>' +
@@ -405,6 +427,11 @@ function showThread(threadId) {
 
   let html = '<h2 class="page-title">' + t.title + '</h2>';
 
+  // duplicates get a warning banner instead of the quick answer
+  if (t.duplicateOf) {
+    html += '<div class="dupe-banner">&#9888; This thread is a duplicate of: ' + originalLink(t) + '</div>';
+  }
+
   // short answer box at the top (the stackoverflow thing)
   if (t.quick) {
     html += '<div class="quick-answer">' +
@@ -426,7 +453,7 @@ function showThread(threadId) {
   html += renderPost({
     user: USERS.GrizzAdmin,
     subject: 'Re: ' + t.title,
-    body: t.answer,
+    body: t.duplicateOf ? duplicateAnswer(t) : t.answer,
     date: t.answerDate,
     votes: t.answerVotes,
     voteKey: t.id + ':answer',

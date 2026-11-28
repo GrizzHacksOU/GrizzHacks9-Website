@@ -467,3 +467,31 @@ a:hover {
   margin-bottom: 8px;
   font-size: 11px;
 }
+
+/* ---------- duplicate threads ---------- */
+
+.forum-table tr.dupe-row td {
+  color: var(--muted);
+}
+
+.forum-table tr.dupe-row .topic-link {
+  font-weight: normal;
+}
+
+.tag-dupe {
+  color: var(--muted);
+  border-color: var(--border);
+  font-style: italic;
+}
+
+.dupe-line {
+  margin-top: 2px;
+}
+
+.dupe-banner {
+  background: var(--sticky);
+  border: 1px solid #c9a227;
+  padding: 8px 10px;
+  margin: 8px 0;
+  font-weight: bold;
+}
