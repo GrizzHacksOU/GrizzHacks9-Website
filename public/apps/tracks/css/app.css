@@ -1,73 +1,294 @@
-ol {
+/*div, span {
+    border: dashed black;
+    border-width: 1px;
+}*/
+:root {
+    --disabled-gray: lightgray
+}
+html, body {
+    height: 100%;
+    margin: 0;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: lightgray;
+}
+img {
+    max-height: 100%;
+}
+
+/* TOP & BOTTOM HALF CONTAINERS*/
+#topHalf {
+    flex: 1;
+    display: flex;
+}
+#bottomHalf {
+    flex: 1;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    border: inset;
+}
+
+/* From this point on, the elements are listed as they appear left to right, outside in */
+
+/* NOWPLAYING CONTAINER */
+#nowPlaying {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    margin-right: 5px;
+}
+
+/* ALBUM COVER */
+#albumCoverBox {
+    height: 60%;
+    box-sizing: border-box;
+    border: thin dashed black;
+    container-type: size;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#albumCover {
+    box-sizing: border-box;
+    border: thin dashed black;
+    width: fit-content;
+
+    display: flex;
+    align-items: center;
+
+    --blacksquareSize: min(90cqh, 60cqw);
+    --cdSize: calc(var(--blacksquareSize) * 0.95);
+}
+#blackSquare {
+    width: var(--blacksquareSize);
+    height: var(--blacksquareSize);
+    position: relative;
+    z-index: 2;
+}
+#cd {
+    width: var(--cdSize);
+    height: var(--cdSize);
+    margin-left: calc(var(--cdSize) / -2);
+    z-index: 1;
+}
+#cd.spinning {
+    animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+    to {rotate: 360deg;}
+}
+
+
+#display_controls {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* TRACK TITLE SCROLLING ANIMATION */
+#trackTitleBox {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    align-items: flex-end; /* push the title to the bottom of the box */
+
+    overflow: hidden;
+    white-space: nowrap;
+}
+#trackTitle {
+    display: inline-block;
+    flex-shrink: 0; /* don't let flex squeeze the two copies (breaks the -50% loop) */
+    /* holds two copies of the title: [copy][copy]; animated from app.js */
+    transform: translateX(-50%);
+}
+#trackTitle span {
+    display: inline-block;
+    /* each copy is at least as wide as the box, so only one shows at a time */
+    min-width: var(--box-width, 100%);
+    box-sizing: border-box; /* padding counts toward min-width, so short titles wrap seamlessly */
+    padding-right: 3em; /* minimum gap for titles longer than the box */
+}
+
+/* AUDIO DISPLAY */
+#audioContainer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    color: darkgray;
+}
+#currentTime, #duration {
+    flex-shrink: 0;                     /* labels never get squished */
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums; /* digits same width, so the bar doesn't jitter */
+}
+
+/* PROGRESS BAR */
+#progressContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex: 1;       /* take whatever space the labels leave */
+    min-width: 0;  /* allow shrinking below its content size */
+    height: 10px;
+}
+#progressLine {
+    width: 100%;
+    box-sizing: border-box;
+    border: inset var(--disabled-gray);
+
+    cursor: pointer;
+}
+#progressTracker {
+    height: 17px;
+    width: 9px;
+    box-sizing: border-box;
+    border: outset var(--disabled-gray);
+    border-width: 2px;
+
+    background-color: var(--disabled-gray);
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    margin: auto 0;
+    
+    pointer-events: none;
+}
+
+
+/* CONTROL BUTTONS */
+#songControls {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+#songControls button {
+    height: 25px;
+    background-color: lightgray;
+    border:outset var(--disabled-gray);
+    border-width: 2px;
+    box-sizing: border-box;
+}
+
+#songControls button:enabled:hover {
+    background-color: darkgray;
+}
+#songControls button:enabled:active {
+    border: inset darkgray;
+    border-width: 2px;
+}
+#prevBtn {
+    width: 20%;
+    margin-right: 5px;
+}
+#nextBtn {
+    width: 20%;
+    margin-left: 5px;
+}
+#playBtn {
+    flex: 1;
+    min-width: 0;
+}
+
+/* LYRICS PANE */
+#lyrics {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    border: inset;
+}
+#lyricsHeader {
+    border: outset darkgray;
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+}
+#lyricsDisplay {
+    flex: 1;
+    background-color: white;
+    padding: 5px;
+    white-space: pre-line; /* keep line breaks from the .txt file */
+    overflow-y: auto;      /* scroll long lyrics instead of overflowing */
+}
+
+
+/* PLAYLIST HEADER */
+#listHeader {
+    height: 35px;
+    display: flex;
+    background-color: lightgray;
+    padding: 5px;
+    align-items: center;
+    border: outset darkgray;
+    border-radius: 1px;
+    box-sizing: border-box;
+}
+#headerTracks{
+    width: 50%
+}
+#headerArtist {
+    flex: 1;
+}
+#headerDuration {
+    width: 25%;
+    text-align: right;
+}
+
+#listDisplay {
+    background-color: rgb(38, 44, 71);
+    flex: 1;
+}
+
+/* PLAYLIST */
+ul {
     list-style-type:none;
     margin: 0;
     padding: 0;
 }
-
-
-#playlist {
-    width: 50%;
-    display: grid;
+#trackList button:hover {
+    background-color: rgb(61, 71, 116);
 }
-#trackSortBtn {
-    text-align: left;
-}
-#trackList li:nth-child(odd) .trackBtn{
-    background-color: lightgray;
-}
-#trackList li:nth-child(even) .trackBtn{
-    background-color: rgb(237, 237, 237);
-}
-.trackBtn {
-    display: block;
-    text-align: left;
-    cursor: pointer;
-
-    width: 100%;
-    height: 19px;
-    border: none;
-    
-    margin: none;
-    padding-left: 5px;
-    box-sizing: border-box;
-}
-.trackBtn:hover {
-    background-color: rgb(152, 198, 255);
-}
-
-
-#progressContainer {
-    width: 300px;
-    height: 10px;
-    cursor: pointer;
-
-    /*
-    border: 2px solid black;
-    border-radius: 10px;
-    background-color: white;
-    padding: 1px;
-    */
-    
-    background-color: lightgray;
-}
-
-#progressBar {
-    height: 100%;
-    width: 0%;
-
-    background-color: rgb(28, 170, 226);
-
-    /*
-    background-color: black;
-    border-radius: 10px;
-    */
-}
-
-#audioContainer {
+#trackList button {
     display: flex;
     align-items: center;
+    border: none;
+
+    cursor: pointer;
+    width: 100%;
+    height: 30px;
+
+    background-color: inherit;
+    color: white;
+}
+.trackName {
+    text-align: left;
+    width: 50%;
+    min-width: 0;
+}
+.trackArtist {
+    text-align: left;
+    flex: 1;
+}
+.trackTime {
+    text-align: right;
+    width: 25%;
 }
 
-#songControls {
-    padding-top: 5px;
-}
+
+

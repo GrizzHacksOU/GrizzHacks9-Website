@@ -13,34 +13,67 @@
 
 
 <body>
-  <div id="playlist"> 
-    <button id="trackSortBtn">Tracks</button>
-    <ol id="trackList"></ol> <!-- Clickable tracks are added in JS -->
+  <div id="topHalf">
+
+    <div id="nowPlaying">
+      
+      <!-- Album Cover -->
+      <div id="albumCoverBox">
+        <div id="albumCover">
+          <img id="blackSquare" src="song_stuff/blacksqurae.png">
+          <img id="cd" src="song_stuff/cd.png">
+        </div>
+      </div>
+
+      <!-- Display song and controls -->
+      <div id="display_controls">
+        <div id="trackTitleBox">
+          <label id="trackTitle" for="audio"></label>
+        </div>
+
+        <div id="audioContainer">
+          <label id="currentTime" for="progressBar">--:--</label>
+
+          <div id="progressContainer">
+            <audio id="audio"></audio>
+            <div id="progressLine"></div>
+            <div id="progressTracker"></div>
+          </div>
+
+          <label id="duration" for="progressBar">--:--</label>
+        </div>
+
+
+        <div id="songControls"> 
+          <button id="prevBtn" disabled>|◀</button>
+          <button id="playBtn" disabled>▶</button>
+          <button id="nextBtn" disabled>▶|</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="lyrics">
+      <div id="lyricsHeader">Lyrics</div>
+      <div id="lyricsDisplay">Click a track to see its information</div>
+    </div>
+
+  </div>
+  
+  <div id="bottomHalf">   
+
+    <div id="listHeader">
+      <span id="headerTracks">Tracks</span>
+      <span id="headerArtist">Artist</span>
+      <span id="headerDuration">Duration</span>
+    </div>
+
+    <div id="listDisplay">
+      <ul id="trackList"></ul> <!-- Clickable tracks are added in JS -->
+    </div>
   </div> 
 
-  <div id="controls">
-    <label id="trackTitle" for="audio"></label>
 
-    <br>
-
-    <div id="audioContainer">
-      <label id="currentTime" for="progressBar">--:--</label>
-      <div id="progressContainer">
-        <audio id="audio"></audio>
-        <div id="progressBar"></div>
-      </div>
-      <label id="duration" for="progressBar">--:--</label>
-    </div>
-
-
-    <div id="songControls"> 
-      <button id="prevBtn" disabled>Previous</button>
-      <button id="playBtn" disabled>Play</button>
-      <button id="nextBtn" disabled>Next</button>
-    </div>
-    
-    
-  </div>
 
   
   

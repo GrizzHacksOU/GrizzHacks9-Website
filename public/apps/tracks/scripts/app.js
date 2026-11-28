@@ -3,24 +3,21 @@ const playBtn = document.getElementById("playBtn");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
 const trackTitle = document.getElementById("trackTitle")
-const progressBar = document.getElementById("progressBar")
-const progressContainer = document.getElementById("progressContainer")
+const progressTracker = document.getElementById("progressTracker")
+const progressLine = document.getElementById("progressLine")
 const currentTimeLabel = document.getElementById("currentTime")
 const durationLabel = document.getElementById("duration");
 const trackList = document.getElementById("trackList");
-const trackSortBtn = document.getElementById("trackSortBtn")
+const lyricsDisplay = document.getElementById("lyricsDisplay")
+const cd = document.getElementById("cd")
 
 /* Track list */
-const originalTracks = [
-    {title: "AI/ML",        src: "audios/placeholder.mp3"},
-    {title: "Social Good",  src: "audios/placeholder2.mp3"},
-    {title: "FinTech",      src: "audios/placeholder3.mp3"}
+const tracks = [
+    {title: "01_beginner.mp3",     src: "song_stuff/01_beginner.mp3",       artist: "Sponsor",  lyrics: "song_stuff/01_beginner.txt"},
+    {title: "02_social_good.mp3",  src: "song_stuff/02_social_good.mp3",    artist: "Sponsor",  lyrics: "song_stuff/02_social_good.txt"},
+    {title: "03_fintech.mp3",      src: "song_stuff/03_fintech.mp3",        artist: "Sponsor",  lyrics: "song_stuff/03_fintech.txt"}
 ];
-let currentIndex = 0;
-let tracks = [...originalTracks];
 
-const trackSortStates = ["Tracks", "Tracks ▲", "Tracks ▼"];
-let currentTrackState = 0;
 
 
 /* ==== FUNCTIONS ==== */
@@ -36,89 +33,140 @@ function cycle(current, length, step=0) {
     return (current + step + length) % length;
 }
 
-/** 
- * Load track in next index if nothing is passed, otherwise load track at the specified index
- * */
+/**
+ * Play the next track in the playlist or the desired track
+ * @param {number} index [number=currentIndex+1] index of the desired track
+ */
 function loadTrack(index = currentIndex+1) {
     currentIndex = cycle(index, tracks.length)
     
+    // Get next track on
     let currentTrack = tracks[currentIndex];
     audio.src = currentTrack.src;
-    trackTitle.textContent = currentTrack.title;
-    progressBar.style.width = "0%";
+    setTrackTitle(currentTrack.title);
+    progressTracker.style.left = "0%";
+
+    // Set lyrics
+    fetch(currentTrack.lyrics)
+        .then(res => res.ok ? res.text() : "No lyrics available")
+        .then(text => lyricsDisplay.textContent = text);
+
     audio.play();
 
+    document.documentElement.style.setProperty("--disabled-gray", "darkgray");
+    document.getElementById("audioContainer").style.color = "black";
     playBtn.disabled = false;
     prevBtn.disabled = false;
     nextBtn.disabled = false;
 }
 
+
 /**
- * Format .duration property into readable timestamp 
- * */ 
-function formatTime(seconds) {
+ * Format seconds into readable timestamp 
+ * @param {number} seconds duration in seconds
+ * @returns a string of the formatted timestamp
+ */
+function timeStamp(seconds) {
     const minute = Math.floor(seconds / 60);
     const second = Math.floor(seconds % 60);
     return `${minute}:${second < 10 ? '0' : ''}${second}`; // if <10 seconds, add a 0 before the sec, otherwise add nun
 }
 
 /**
- * Render the playlist, especially at the beginning and after a sort
+ * Render the trackList
  */
-function renderPlaylist() {
+function renderTrackList() {
     trackList.replaceChildren();
     
     tracks.forEach((track, index) => {
         const li = document.createElement("li");
+        const btn = document.createElement("button")
+        btn.addEventListener('click', () => loadTrack(index));
 
-        const btn = document.createElement("button");
-        btn.textContent = track.title;
-        btn.classList.add("trackBtn");
-        btn.addEventListener('click', () => {
-            loadTrack(index); // When the button is clicked, it plays the song
-        });
+        const title = document.createElement("span");
+        title.textContent = track.title;
+        title.classList.add("trackName");
 
-        li.appendChild(btn);
+        const artist = document.createElement("span");
+        artist.textContent = track.artist;
+        artist.classList.add("trackArtist");
+
+        const time = document.createElement("span");
+        time.classList.add("trackTime");
+        time.textContent = track.duration ? timeStamp(track.duration) : "--:--"
+
+        btn.append(title, artist, time)
+
+        li.append(btn);
         trackList.appendChild(li); // Put the button inside container
     })
 }
 
-renderPlaylist(); // First call to render upon page load
+// Set duration label for trackList
+tracks.forEach((track) => {
+    const probe = new Audio(track.src);
+    probe.addEventListener("loadedmetadata", () => {
+        track.duration = probe.duration;
+        renderTrackList();
+    });
+});
 
 
-/* ==== PLAYLIST LOGIC ==== */
+/* === Scrolling title stuff === */
+/**
+ * Set the scrolling title: two copies for the wrap-around, restart animation
+ * @param {String} text title text
+ */
+function setTrackTitle(text) {
+    trackTitle.replaceChildren();
+    for (let i = 0; i < 2; i++) {
+        const span = document.createElement("span");
+        span.textContent = text;
+        trackTitle.appendChild(span);
+    }
+    startTitleScroll(); // restarts from the original position + pause
+}
 
-// trackSort button logic
-trackSortBtn.addEventListener('click', () => {
-    currentTrackState = cycle(currentTrackState, trackSortStates.length, 1);
-    trackSortBtn.textContent = trackSortStates[currentTrackState];
-    
-    // Save the current playing song to rewire the index after sorting
-    const playing = tracks[currentIndex]; 
 
-    switch (currentTrackState) {
-        case 0:
-            tracks = [...originalTracks];
-            break;
-    
-        case 1: // Sort A -> Z
-            tracks.sort((a,b) => a.title.localeCompare(b.title));
-            break;
+const TITLE_PAUSE_MS = 1500; // pause at the original position each loop
+const TITLE_SPEED = 40;      // scroll speed in px per second
+let titleAnimation = null;  // Keep track of current animation state
+/**
+ * Size the copies to the box and restart the scroll animation
+ */
+function startTitleScroll() {
+    const box = trackTitle.parentElement;
+    trackTitle.style.setProperty("--box-width", box.clientWidth + "px");
 
-        case 2: // Sort Z -> A
-            tracks.sort((a,b) => b.title.localeCompare(a.title));
-            break;
-        
-        default:
-            break;
+    const distance = trackTitle.scrollWidth / 2; // width of one copy + gap
+    const moveMs = (distance / TITLE_SPEED) * 1000;
+    const totalMs = TITLE_PAUSE_MS + moveMs;
+    const pauseEnd = TITLE_PAUSE_MS / totalMs;
+
+    if (titleAnimation) {
+        titleAnimation.cancel();
     }
 
-    // Rewire current index to the new index of currently playing song
-    currentIndex = tracks.indexOf(playing);
+    titleAnimation = trackTitle.animate([
+        { transform: "translateX(-50%)", offset: 0 },
+        { transform: "translateX(-50%)", offset: pauseEnd }, // hold still
+        { transform: "translateX(0)",    offset: 1 }         // seamless loop point
+    ], { duration: totalMs, iterations: Infinity, easing: "linear" });
+}
 
-    renderPlaylist();
-})
+// Re-size the title copies whenever the window/box changes size
+let lastBoxWidth = 0;
+new ResizeObserver(() => {
+    const width = trackTitle.parentElement.clientWidth;
+    if (width === lastBoxWidth) {
+        return;
+    }
 
+    lastBoxWidth = width;
+    if (trackTitle.childElementCount && !audio.paused) {
+        startTitleScroll();
+    }
+}).observe(trackTitle.parentElement);
 
 
 /* ==== AUDIO PLAYER LOGIC ==== */
@@ -126,31 +174,36 @@ trackSortBtn.addEventListener('click', () => {
 // Set duration label according to track
 audio.addEventListener('loadedmetadata', () => {
     currentTimeLabel.textContent = "0:00"
-    durationLabel.textContent = formatTime(audio.duration);
+    durationLabel.textContent = timeStamp(audio.duration);
 })
+
 
 // Switch next track when this track ends
 audio.addEventListener('ended', () => loadTrack())
 
+
 // Update progress bar and current time label
 let lastSecond = 0;
 audio.addEventListener('timeupdate', () => {
-    const currentSecond = Math.floor(audio.currentTime); // Get rounded down current second
+    const currentSecond = Math.floor(audio.currentTime); // Get rounded-down current second
 
     if (currentSecond !== lastSecond) {
         lastSecond = currentSecond; // Update the last second
         const percent = (audio.currentTime / audio.duration) * 100;
-        progressBar.style.width = percent + "%";
-        currentTimeLabel.textContent = formatTime(audio.currentTime);
+        progressTracker.style.left = percent + "%";
+        currentTimeLabel.textContent = timeStamp(audio.currentTime);
     }
 })
 
 // Set progress to mouse click
-progressContainer.addEventListener('click', (e) => {
-    const containerWidth = progressContainer.clientWidth;
-    const clickX = e.offsetX;
-    const duration = audio.duration;
-    audio.currentTime = (clickX / containerWidth) * duration;
+progressLine.addEventListener('click', (e) => {
+    if (!audio.duration) {
+        return; // no track loaded yet
+    }
+    const rect = progressLine.getBoundingClientRect();
+    const clickX = e.clientX - rect.left; // works no matter which child was clicked
+    const ratio = Math.min(Math.max(clickX / rect.width, 0), 1);
+    audio.currentTime = ratio * audio.duration;
     audio.play();
 })
 
@@ -164,17 +217,29 @@ prevBtn.addEventListener('click', () => {
     } else {
         audio.currentTime = 0;
     }
+    cd.classList.remove("spinning");
+    cd.classList.add("spinning");
 })
 
 // Play button logic
 playBtn.addEventListener('click', () => {
-    if (audio.paused) audio.play();
-    else audio.pause();
+    if (audio.paused) {audio.play();}
+    else              {audio.pause()};
 });
-audio.addEventListener('play', () => playBtn.textContent = 'Pause'); // Btn text changes based on audio's status
-audio.addEventListener('pause', () => playBtn.textContent = 'Play');
+audio.addEventListener('play', () => {
+    playBtn.textContent = '❚❚'; // Btn text changes based on audio's status
+    startTitleScroll();         // title scrolls again from the original position
+    cd.classList.add("spinning");
+});
+audio.addEventListener('pause', () => {
+    playBtn.textContent = '▶';
+    if (titleAnimation) titleAnimation.cancel(); // snap back to original position and stop
+    cd.classList.remove("spinning");
+});
 
 // Next button logic
 nextBtn.addEventListener('click', () => {
     loadTrack();
+    cd.classList.remove("spinning");
+    cd.classList.add("spinning");
 })
