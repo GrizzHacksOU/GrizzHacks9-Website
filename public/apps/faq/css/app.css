@@ -306,3 +306,97 @@ a:hover {
   text-align: center;
   font-size: 11px;
 }
+
+/* ---------- votes ---------- */
+
+.post-votes {
+  width: 36px;
+  padding: 8px 4px;
+  vertical-align: top;
+  text-align: center;
+  background: var(--row-alt);
+  border-right: 1px solid var(--border);
+}
+
+/* XP.css makes every button big, so undo that for the little arrows */
+.vote-btn {
+  min-width: 0;
+  min-height: 0;
+  width: 24px;
+  height: 18px;
+  padding: 0;
+  font-size: 10px;
+  line-height: 1;
+}
+
+.vote-btn.active {
+  color: var(--admin);
+  font-weight: bold;
+}
+
+.vote-count {
+  font-weight: bold;
+  font-size: 13px;
+  margin: 3px 0;
+}
+
+/* ---------- official answer / quotes / replies header ---------- */
+
+.official {
+  display: inline-block;
+  color: #2e7d32;
+  font-weight: bold;
+  margin-right: 6px;
+}
+
+.quote {
+  background: var(--row-alt);
+  border: 1px solid var(--border);
+  padding: 6px 8px;
+  margin-bottom: 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.quote-head {
+  font-weight: bold;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.replies-head {
+  background: var(--head-bg);
+  color: var(--head-text);
+  padding: 4px 8px;
+  margin: 12px 0 8px;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* ---------- banned users ---------- */
+
+.badge-banned {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: bold;
+  color: #ffffff;
+  background: #333333;
+  padding: 1px 5px;
+  margin: 2px 0 6px;
+}
+
+.avatar.banned {
+  background: #cccccc;
+  color: #888888;
+  border-color: #999999;
+}
+
+.banned-note {
+  margin-top: 10px;
+  padding: 4px 6px;
+  border: 1px solid var(--admin);
+  color: var(--admin);
+  font-size: 11px;
+  font-weight: bold;
+  font-style: italic;
+}

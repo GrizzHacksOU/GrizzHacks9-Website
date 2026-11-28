@@ -1,6 +1,10 @@
 // All the content for the FAQ forum lives here.
 // To add a question just add another object to THREADS.
 // NOTE: titles, questions and answers are lorem ipsum for now, swap them with the real info later!
+//
+// IMPORTANT!! dont change thread ids or reply ids (r1, r2...) once the site is live.
+// votes get saved in the browser using those ids, so if u rename them peoples votes
+// will either disappear or end up on the wrong post. adding new ones is fine
 
 const USERS = {
   GrizzAdmin: {
@@ -42,8 +46,8 @@ const USERS = {
     name: 'n00b_hax0r',
     role: 'member',
     rank: 'Newbie',
-    joined: 'Feb 2004',
-    posts: 3,
+    joined: 'Sep 2003',
+    posts: 9,
     location: '',
     sig: 'first post!!1!'
   },
@@ -67,6 +71,10 @@ const CATEGORIES = [
 ];
 
 // author = whoever asked the question, the answer is always from GrizzAdmin
+// dates are 'YYYY-MM-DD HH:MM' (24h), app.js turns them into the old forum format
+// replies get sorted by votes (highest first), the admin answer always stays on top
+// quote: put the id of the post being quoted ('question', 'answer' or a reply id like 'r1')
+// banned: true instead of author hides the username and shows the "Banned User" badge
 const THREADS = [
   // ---------- General ----------
   {
@@ -77,26 +85,51 @@ const THREADS = [
     title: 'Lorem ipsum dolor sit amet?',
     author: 'n00b_hax0r',
     views: 4821,
+    date: '2003-09-14 21:07',
+    votes: 12,
     question: 'lorem ipsum dolor sit amet??',
     quick: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
       'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ' +
       'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    edited: true
+    answerDate: '2003-09-15 09:30',
+    answerVotes: 48,
+    edited: true,
+    replies: [
+      { id: 'r1', author: 'lan_party_dave', date: '2003-09-14 21:40', votes: 15, text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod?' },
+      { id: 'r2', author: 'xX_c0d3r_Xx', date: '2003-09-14 22:15', votes: 9, text: 'Ut enim ad minim veniam lol', quote: 'r1' },
+      { id: 'r3', author: 'sk8rgrl2003', date: '2003-09-15 11:02', votes: 4, text: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore.' },
+      { id: 'r4', author: 'n00b_hax0r', date: '2003-09-15 12:48', votes: 2, text: 'oh. lorem ipsum thx!!', quote: 'answer' }
+    ]
   },
   {
     id: 'do-i-need-to-code',
     category: 'general',
     sticky: false,
     locked: true,
-    title: 'Consectetur adipiscing elit sed do?',
+    title: 'Can I join if I have never coded before?',
     author: 'sk8rgrl2003',
     views: 1290,
-    question: 'consectetur adipiscing elit, sed do eiusmod tempor... ut labore?',
-    quick: 'Sed do eiusmod tempor incididunt ut labore.',
-    answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
-      'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    edited: false
+    date: '2003-10-02 16:22',
+    votes: 5,
+    question: 'ok so i have literally never written a line of code. is GrizzHacks even for me?? ' +
+      'i don\'t want to be the person slowing my team down :(',
+    quick: 'Yes! No coding experience needed. First-timers are welcome.',
+    answer: 'Absolutely, yes! You don\'t need any coding experience to join GrizzHacks. ' +
+      'A hackathon is one of the best places to learn: you pick things up from your teammates, ' +
+      'and there\'s a lot more to a project than code, like coming up with the idea, design, research, ' +
+      'and presenting your demo at the end.<br><br>' +
+      'Everyone here started somewhere. Just bring your laptop and your curiosity, ' +
+      'and don\'t be afraid to ask questions. We can\'t wait to see what you build!',
+    answerDate: '2003-10-02 18:05',
+    answerVotes: 21,
+    edited: false,
+    replies: [
+      // banned: true -> no username shown, gets the "Banned User" badge instead
+      { id: 'r1', banned: true, date: '2003-10-02 16:51', votes: -14, text: 'lol you\'ve never coded and you want to go to a HACKathon?? ' +
+        'go watch a hello world tutorial first. you\'re gonna be dead weight for whatever team gets stuck with you' },
+      { id: 'r2', author: 'Neo_1999', date: '2003-10-02 17:30', votes: 11, text: 'Excepteur sint occaecat cupidatat non proident.', quote: 'r1' }
+    ]
   },
   {
     id: 'how-much-does-it-cost',
@@ -106,10 +139,15 @@ const THREADS = [
     title: 'Eiusmod tempor incididunt?',
     author: 'lan_party_dave',
     views: 976,
+    date: '2003-11-20 01:13',
+    votes: 3,
     question: 'eiusmod tempor? incididunt ut labore?',
     quick: 'Ut enim ad minim veniam.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    edited: false
+    answerDate: '2003-11-20 10:45',
+    answerVotes: 17,
+    edited: false,
+    replies: []
   },
 
   // ---------- Registration ----------
@@ -121,11 +159,20 @@ const THREADS = [
     title: 'Ut labore et dolore magna aliqua?',
     author: 'Neo_1999',
     views: 3507,
+    date: '2004-01-08 19:55',
+    votes: 8,
     question: 'ut labore et dolore magna aliqua. quis nostrud?',
     quick: 'Quis nostrud exercitation ullamco laboris.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
       'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    edited: true
+    answerDate: '2004-01-08 20:10',
+    answerVotes: 35,
+    edited: true,
+    replies: [
+      { id: 'r1', author: 'n00b_hax0r', date: '2004-01-08 20:44', votes: 6, text: 'lorem ipsum dolor sit amet ^^^', quote: 'answer' },
+      { id: 'r2', author: 'sk8rgrl2003', date: '2004-01-09 08:17', votes: 3, text: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem.' },
+      { id: 'r3', author: 'lan_party_dave', date: '2004-01-09 13:02', votes: 1, text: '+1' }
+    ]
   },
   {
     id: 'who-can-attend',
@@ -135,12 +182,22 @@ const THREADS = [
     title: 'Quis nostrud exercitation ullamco?',
     author: 'n00b_hax0r',
     views: 1544,
+    date: '2004-01-12 23:41',
+    votes: 4,
     question: 'quis nostrud exercitation??',
     quick: 'Duis aute irure dolor in reprehenderit.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
       'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ' +
       'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    edited: false
+    answerDate: '2004-01-13 11:20',
+    answerVotes: 14,
+    edited: false,
+    replies: [
+      { id: 'r1', author: 'lan_party_dave', date: '2004-01-13 00:05', votes: 7, text: 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.' },
+      { id: 'r2', author: 'xX_c0d3r_Xx', date: '2004-01-13 00:31', votes: -5, text: 'Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet???', quote: 'r1' },
+      { id: 'r3', author: 'sk8rgrl2003', date: '2004-01-13 09:12', votes: 8, text: 'Quis autem vel eum iure reprehenderit.', quote: 'r2' },
+      { id: 'r4', author: 'Neo_1999', date: '2004-01-13 14:58', votes: 2, text: 'Lorem ipsum dolor sit amet.' }
+    ]
   },
   {
     id: 'teams',
@@ -150,11 +207,18 @@ const THREADS = [
     title: 'Laboris nisi ut aliquip ex ea commodo consequat?',
     author: 'sk8rgrl2003',
     views: 1102,
+    date: '2004-02-03 15:30',
+    votes: 6,
     question: 'laboris nisi ut aliquip lol. ex ea commodo consequat?',
     quick: 'Excepteur sint occaecat cupidatat non proident.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
       'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    edited: false
+    answerDate: '2004-02-03 17:42',
+    answerVotes: 19,
+    edited: false,
+    replies: [
+      { id: 'r1', author: 'Neo_1999', date: '2004-02-03 16:05', votes: 10, text: 'Ut enim ad minima veniam, quis nostrum exercitationem. Lorem ipsum dolor!!' }
+    ]
   },
 
   // ---------- Travel & Parking ----------
@@ -166,11 +230,19 @@ const THREADS = [
     title: 'Duis aute irure dolor?',
     author: 'lan_party_dave',
     views: 2033,
+    date: '2004-02-19 10:08',
+    votes: 7,
     question: 'duis aute irure dolor?? in reprehenderit',
     quick: 'Lorem ipsum dolor sit amet, consectetur.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
       'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    edited: true
+    answerDate: '2004-02-19 10:55',
+    answerVotes: 29,
+    edited: true,
+    replies: [
+      { id: 'r1', author: 'xX_c0d3r_Xx', date: '2004-02-19 10:20', votes: 3, text: 'Lorem ipsum dolor sit amet, consectetur.' },
+      { id: 'r2', author: 'lan_party_dave', date: '2004-02-19 11:30', votes: 5, text: 'At vero eos et accusamus et iusto odio dignissimos ducimus.', quote: 'question' }
+    ]
   },
   {
     id: 'parking',
@@ -180,10 +252,19 @@ const THREADS = [
     title: 'Velit esse cillum dolore?',
     author: 'xX_c0d3r_Xx',
     views: 845,
+    date: '2004-02-25 08:44',
+    votes: 2,
     question: 'velit esse cillum dolore eu fugiat nulla pariatur or something',
     quick: 'Sed do eiusmod tempor incididunt.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    edited: false
+    answerDate: '2004-02-25 12:16',
+    answerVotes: 13,
+    edited: false,
+    replies: [
+      { id: 'r1', author: 'sk8rgrl2003', date: '2004-02-25 09:01', votes: 4, text: 'Temporibus autem quibusdam et aut officiis debitis.' },
+      { id: 'r2', author: 'n00b_hax0r', date: '2004-02-25 09:47', votes: -2, text: 'lorem ipsum?? dolor sit amet' },
+      { id: 'r3', author: 'Neo_1999', date: '2004-02-25 13:20', votes: 6, text: 'Itaque earum rerum hic tenetur a sapiente delectus.', quote: 'r2' }
+    ]
   },
   {
     id: 'travel-reimbursement',
@@ -193,11 +274,16 @@ const THREADS = [
     title: 'Fugiat nulla pariatur?',
     author: 'Neo_1999',
     views: 610,
+    date: '2004-03-01 20:19',
+    votes: 1,
     question: 'fugiat nulla pariatur, excepteur sint occaecat?',
     quick: 'Ut enim ad minim veniam, quis nostrud.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
       'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    edited: false
+    answerDate: '2004-03-02 09:05',
+    answerVotes: 9,
+    edited: false,
+    replies: []
   },
 
   // ---------- During the Event ----------
@@ -209,6 +295,8 @@ const THREADS = [
     title: 'Excepteur sint occaecat cupidatat?',
     author: 'sk8rgrl2003',
     views: 2710,
+    date: '2004-03-05 17:36',
+    votes: 9,
     question: 'excepteur sint occaecat cupidatat non proident',
     quick: 'Duis aute irure dolor in reprehenderit in voluptate.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.<ul>' +
@@ -218,7 +306,15 @@ const THREADS = [
       '<li>Sed do eiusmod tempor</li>' +
       '<li>Incididunt ut labore</li></ul>' +
       'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    edited: true
+    answerDate: '2004-03-05 18:02',
+    answerVotes: 41,
+    edited: true,
+    replies: [
+      { id: 'r1', author: 'lan_party_dave', date: '2004-03-05 18:30', votes: 22, text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.', quote: 'answer' },
+      { id: 'r2', author: 'xX_c0d3r_Xx', date: '2004-03-05 19:11', votes: 5, text: 'Duis aute irure dolor.', quote: 'r1' },
+      { id: 'r3', author: 'Neo_1999', date: '2004-03-06 02:47', votes: 3, text: 'Excepteur sint occaecat cupidatat non proident, sunt in culpa.' },
+      { id: 'r4', author: 'sk8rgrl2003', date: '2004-03-06 10:15', votes: 1, text: 'lorem ipsum thx' }
+    ]
   },
   {
     id: 'food',
@@ -228,10 +324,18 @@ const THREADS = [
     title: 'Sunt in culpa?',
     author: 'lan_party_dave',
     views: 1888,
+    date: '2004-03-10 12:00',
+    votes: 14,
     question: 'sunt??',
     quick: 'Excepteur sint occaecat cupidatat.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    edited: false
+    answerDate: '2004-03-10 12:30',
+    answerVotes: 37,
+    edited: false,
+    replies: [
+      { id: 'r1', author: 'n00b_hax0r', date: '2004-03-10 12:04', votes: 18, text: 'lorem ipsum!!!' },
+      { id: 'r2', author: 'xX_c0d3r_Xx', date: '2004-03-10 13:15', votes: 12, text: 'Nam libero tempore, cum soluta nobis est eligendi optio.', quote: 'r1' }
+    ]
   },
   {
     id: 'sleeping',
@@ -241,6 +345,8 @@ const THREADS = [
     title: 'Qui officia deserunt mollit anim?',
     author: 'n00b_hax0r',
     views: 734,
+    date: '2004-03-14 03:22',
+    votes: 3,
     question: 'qui officia deserunt mollit anim id est laborum?',
     quick: 'Lorem ipsum dolor sit amet.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
@@ -250,7 +356,12 @@ const THREADS = [
       'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. ' +
       'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ' +
       'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-    edited: false
+    answerDate: '2004-03-14 11:40',
+    answerVotes: 16,
+    edited: false,
+    replies: [
+      { id: 'r1', author: 'lan_party_dave', date: '2004-03-14 03:50', votes: 4, text: 'Lorem ipsum dolor sit amet.' }
+    ]
   },
 
   // ---------- Prizes & Judging ----------
@@ -262,12 +373,21 @@ const THREADS = [
     title: 'Mollit anim id est laborum?',
     author: 'xX_c0d3r_Xx',
     views: 1650,
+    date: '2004-03-20 14:10',
+    votes: 10,
     question: 'mollit anim id est laborum. lorem ipsum dolor sit amet consectetur?',
     quick: 'Sed do eiusmod tempor incididunt ut labore et dolore.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
       'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. ' +
       'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-    edited: true
+    answerDate: '2004-03-20 16:33',
+    answerVotes: 33,
+    edited: true,
+    replies: [
+      { id: 'r1', author: 'sk8rgrl2003', date: '2004-03-20 14:45', votes: 13, text: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.', quote: 'question' },
+      { id: 'r2', author: 'Neo_1999', date: '2004-03-20 15:20', votes: 7, text: 'Totam rem aperiam, eaque ipsa quae ab illo inventore veritatis.' },
+      { id: 'r3', author: 'xX_c0d3r_Xx', date: '2004-03-20 17:05', votes: -4, text: 'lorem ipsum dolor. sit amet.', quote: 'answer' }
+    ]
   },
   {
     id: 'what-are-the-prizes',
@@ -277,10 +397,18 @@ const THREADS = [
     title: 'Nemo enim ipsam voluptatem?',
     author: 'Neo_1999',
     views: 2299,
+    date: '2004-03-22 22:58',
+    votes: 11,
     question: 'nemo enim ipsam?',
     quick: 'Ut enim ad minim veniam.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    edited: false
+    answerDate: '2004-03-23 09:15',
+    answerVotes: 24,
+    edited: false,
+    replies: [
+      { id: 'r1', author: 'lan_party_dave', date: '2004-03-22 23:10', votes: 16, text: 'Lorem ipsum dolor sit amet consectetur?!' },
+      { id: 'r2', author: 'n00b_hax0r', date: '2004-03-22 23:24', votes: 9, text: 'lorem ipsum +1', quote: 'r1' }
+    ]
   },
   {
     id: 'old-projects',
@@ -290,10 +418,17 @@ const THREADS = [
     title: 'Neque porro quisquam est qui dolorem ipsum?',
     author: 'lan_party_dave',
     views: 512,
+    date: '2004-03-27 18:40',
+    votes: -2,
     question: 'neque porro quisquam est, qui dolorem ipsum quia dolor sit amet?',
     quick: 'Quis nostrud exercitation ullamco.',
     answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' +
       'Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-    edited: false
+    answerDate: '2004-03-27 19:12',
+    answerVotes: 20,
+    edited: false,
+    replies: [
+      { id: 'r1', author: 'Neo_1999', date: '2004-03-27 19:40', votes: 8, text: 'Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse.', quote: 'answer' }
+    ]
   }
 ];
