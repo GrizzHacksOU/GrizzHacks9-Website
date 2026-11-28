@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/apps/about-us/css/app.css">
+    <title>About GrizzHacks</title>
+  </head>
+  <body>
+    <div class="hm-body">
+      <nav class="hm-left">
+        <div class="hm-tabs">
+          <button class="hm-tab" data-tab="contents">Contents</button>
+          <button class="hm-tab" data-tab="index">Index</button>
+          <button class="hm-tab" data-tab="search">Search</button>
+        </div>
+        <div class="hm-panel">
+          <input class="hm-search" placeholder="Type a word..." hidden>
+          <ul class="hm-list"></ul>
+        </div>
+      </nav>
+
+      <main class="hm-page">
+        <h2 id="page-title"></h2>
+        <hr>
+        <div id="page-body"></div>
+      </main>
+    </div>
+
+    <script src="/apps/about-us/scripts/data.js"></script>
+    <script src="/apps/about-us/scripts/app.js"></script>
+  </body>
+</html>

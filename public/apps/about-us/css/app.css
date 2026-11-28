@@ -1,0 +1,3 @@
+.hm-body { display: flex; }
+.hm-left { width: 220px; flex-shrink: 0; }
+.hm-page { flex: 1; }
