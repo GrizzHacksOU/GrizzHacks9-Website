@@ -218,6 +218,7 @@ prevBtn.addEventListener('click', () => {
         audio.currentTime = 0;
     }
     cd.classList.remove("spinning");
+    void cd.offsetWidth;
     cd.classList.add("spinning");
 })
 
@@ -241,5 +242,6 @@ audio.addEventListener('pause', () => {
 nextBtn.addEventListener('click', () => {
     loadTrack();
     cd.classList.remove("spinning");
+    void cd.offsetWidth;
     cd.classList.add("spinning");
 })
